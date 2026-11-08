@@ -27,62 +27,62 @@
  {
   "check": "taocp-v1 首章渲染",
   "pass": true,
-  "extra": "2826 字符"
+  "extra": "2732 字符"
  },
  {
   "check": "taocp-v1 末章渲染",
   "pass": true,
-  "extra": "3872 字符"
+  "extra": "3711 字符"
  },
  {
   "check": "taocp-v2 首章渲染",
   "pass": true,
-  "extra": "3355 字符"
+  "extra": "3229 字符"
  },
  {
   "check": "taocp-v2 末章渲染",
   "pass": true,
-  "extra": "3408 字符"
+  "extra": "3272 字符"
  },
  {
   "check": "taocp-v3 首章渲染",
   "pass": true,
-  "extra": "2339 字符"
+  "extra": "2244 字符"
  },
  {
   "check": "taocp-v3 末章渲染",
   "pass": true,
-  "extra": "2415 字符"
+  "extra": "2256 字符"
  },
  {
   "check": "taocp-v4a 首章渲染",
   "pass": true,
-  "extra": "2145 字符"
+  "extra": "2050 字符"
  },
  {
   "check": "taocp-v4a 末章渲染",
   "pass": true,
-  "extra": "2713 字符"
+  "extra": "2602 字符"
  },
  {
   "check": "taocp-v4b 首章渲染",
   "pass": true,
-  "extra": "2124 字符"
+  "extra": "2028 字符"
  },
  {
   "check": "taocp-v4b 末章渲染",
   "pass": true,
-  "extra": "2698 字符"
+  "extra": "2592 字符"
  },
  {
   "check": "mmix 首章渲染",
   "pass": true,
-  "extra": "2539 字符"
+  "extra": "2448 字符"
  },
  {
   "check": "mmix 末章渲染",
   "pass": true,
-  "extra": "2802 字符"
+  "extra": "2673 字符"
  },
  {
   "check": "taocp-v1 测验题数",

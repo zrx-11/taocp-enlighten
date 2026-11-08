@@ -91,7 +91,7 @@ svg{max-width:100%;height:auto}
 .mermaid:not([data-rendered="1"])::before{content:"图示源码（联网时自动渲染为图形）";display:block;font-family:var(--sans,inherit);font-size:11px;color:#8b949e;margin-bottom:6px;letter-spacing:.02em}
 body[data-theme="dark"] .mermaid:not([data-rendered="1"]){background:#161b22;border-color:#30363d;color:#c9d1d9}
 </style>
-</head>
+<script src="../mermaid.min.js"></script></head>
 <body>
 <div class="layout">
   <aside class="sidebar">
@@ -315,18 +315,23 @@ $('#q').addEventListener('input', e=>{
 
 /* ---------- Mermaid 懒加载（联网渲染，离线显示源码） ---------- */
 function renderMermaid(){
-  if(!document.querySelector('.mermaid')) return;
-  const s=document.createElement('script');
-  s.src='https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
-  s.onload=()=>{ try{
+  const els=[...document.querySelectorAll('.mermaid')].filter(e=>!e.dataset.rendered);
+  if(!els.length) return;
+  const run=()=>{ try{
     mermaid.initialize({startOnLoad:false, theme: matchMedia('(prefers-color-scheme: dark)').matches?'dark':'default'});
-    document.querySelectorAll('.mermaid').forEach(el=>{
-      const code=el.textContent;
-      mermaid.render('mm'+Math.random().toString(36).slice(2), code)
-        .then(({svg})=>{ el.innerHTML=svg; })
-        .catch(()=>{ el.textContent=code; });
+    els.forEach((el,idx)=>{ const code=el.textContent;
+      mermaid.render('mm'+Date.now()+idx, code)
+        .then(r=>{ el.innerHTML=r.svg; el.dataset.rendered='1'; })
+        .catch(()=>{ el.textContent=code; el.dataset.rendered='0'; });
     });
   }catch(e){} };
+  if(window.mermaid){ run(); return; }
+  if(renderMermaid._loading) return;
+  renderMermaid._loading=true;
+  const s=document.createElement('script');
+  s.src='https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
+  s.onload=()=>{ renderMermaid._loading=false; run(); };
+  s.onerror=()=>{ renderMermaid._loading=false; };
   document.head.appendChild(s);
 }
 
