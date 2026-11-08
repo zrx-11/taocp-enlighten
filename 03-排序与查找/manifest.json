@@ -1,0 +1,635 @@
+{
+  "slug": "taocp-v3",
+  "title": "计算机程序设计艺术 卷3：排序与查找",
+  "subtitle": "把「找」和「排」这两件事的代价算到底",
+  "book": {
+    "title": "计算机程序设计艺术 卷3 排序与查找（第2版）",
+    "author": "Donald E. Knuth（高德纳）著，贾洪峰 译",
+    "source": [
+      "图灵计算机科学丛书 计算机程序设计艺术 卷3 排序与查找 第2版.pdf（扫描版 625 页）"
+    ]
+  },
+  "audience": "学过卷1、写过基本数据结构代码的读者",
+  "goal": "系统掌握：能判断一个排序或查找场景该用哪种结构，能算出比较次数与 I/O 趟数，能解释 n log n 下界与散列退化的边界。",
+  "companion": "taocp-v3学习伴侣.html",
+  "learningPath": [
+    {
+      "step": "01",
+      "title": "先看清排序的组合结构",
+      "chapterIds": [
+        "ch01"
+      ],
+      "checkpoint": "能数逆序对、算多重集排列数、说出平均游程数"
+    },
+    {
+      "step": "02",
+      "title": "五类内部排序与取舍",
+      "chapterIds": [
+        "ch02"
+      ],
+      "checkpoint": "能针对四个场景各选一种算法并说出理由"
+    },
+    {
+      "step": "03",
+      "title": "下界与排序网络",
+      "chapterIds": [
+        "ch03"
+      ],
+      "checkpoint": "能推出 log2 n! 下界，能用 0-1 原理验证小网络"
+    },
+    {
+      "step": "04",
+      "title": "外部排序",
+      "chapterIds": [
+        "ch04"
+      ],
+      "checkpoint": "能算合并趟数与替代选择的游程长度"
+    },
+    {
+      "step": "05",
+      "title": "查找结构与 B 树",
+      "chapterIds": [
+        "ch05"
+      ],
+      "checkpoint": "能算二分与 B 树的层数，解释 AVL 的最坏保证"
+    },
+    {
+      "step": "06",
+      "title": "散列与辅助键",
+      "chapterIds": [
+        "ch06"
+      ],
+      "checkpoint": "能按装载因子估算平均查找长度，解释墓碑的必要性"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "ch01",
+      "title": "第 1 章：排序的组合性质",
+      "file": "chapters/ch01-排序的组合性质.md",
+      "difficulty": 2
+    },
+    {
+      "id": "ch02",
+      "title": "第 2 章：内部排序——五类算法与它们的代价",
+      "file": "chapters/ch02-内部排序.md",
+      "difficulty": 3
+    },
+    {
+      "id": "ch03",
+      "title": "第 3 章：最优排序——比较次数的下界与排序网络",
+      "file": "chapters/ch03-最优排序.md",
+      "difficulty": 3
+    },
+    {
+      "id": "ch04",
+      "title": "第 4 章：外部排序——数据比内存大怎么办",
+      "file": "chapters/ch04-外部排序.md",
+      "difficulty": 3
+    },
+    {
+      "id": "ch05",
+      "title": "第 5 章：查找——从顺序扫到平衡树",
+      "file": "chapters/ch05-查找.md",
+      "difficulty": 3
+    },
+    {
+      "id": "ch06",
+      "title": "第 6 章：散列查找与辅助键",
+      "file": "chapters/ch06-散列与辅助键.md",
+      "difficulty": 3
+    }
+  ],
+  "concepts": [
+    {
+      "id": "c01",
+      "title": "逆序与排序代价",
+      "file": "concepts/inversions-and-cost.md",
+      "chapterIds": [
+        "ch01",
+        "ch02"
+      ]
+    },
+    {
+      "id": "c02",
+      "title": "比较树下界",
+      "file": "concepts/comparison-tree-lower-bound.md",
+      "chapterIds": [
+        "ch03"
+      ]
+    },
+    {
+      "id": "c03",
+      "title": "散列与装载因子",
+      "file": "concepts/hashing-load-factor.md",
+      "chapterIds": [
+        "ch06"
+      ]
+    }
+  ],
+  "glossary": [
+    {
+      "term": "逆序对",
+      "def": "排列中前一个数大于后一个数的一对位置。",
+      "chapterId": "ch01"
+    },
+    {
+      "term": "游程",
+      "def": "排列中一段连续递增的最长子序列。",
+      "chapterId": "ch01"
+    },
+    {
+      "term": "对合",
+      "def": "做两次回到原样的置换，循环长度只能是 1 或 2。",
+      "chapterId": "ch01"
+    },
+    {
+      "term": "稳定排序",
+      "def": "相等元素在排序后保持原来的相对次序。",
+      "chapterId": "ch02"
+    },
+    {
+      "term": "基准",
+      "def": "快速排序中用来划分数组的元素。",
+      "chapterId": "ch02"
+    },
+    {
+      "term": "堆",
+      "def": "一种完全二叉树，每个节点都不小于（或不大于）它的孩子。",
+      "chapterId": "ch02"
+    },
+    {
+      "term": "基数排序",
+      "def": "按键的每一位分配与收集，不做元素间比较的排序。",
+      "chapterId": "ch02"
+    },
+    {
+      "term": "比较树",
+      "def": "把排序过程画成判断树，内部节点是比较，叶子是输出排列。",
+      "chapterId": "ch03"
+    },
+    {
+      "term": "排序网络",
+      "def": "一组固定的比较器，比较顺序与输入无关，可并行执行。",
+      "chapterId": "ch03"
+    },
+    {
+      "term": "0-1 原理",
+      "def": "若网络能排好所有 0/1 输入，就能排好任意输入。",
+      "chapterId": "ch03"
+    },
+    {
+      "term": "初始游程",
+      "def": "外部排序中一块内存数据排好后写到磁盘上的有序段。",
+      "chapterId": "ch04"
+    },
+    {
+      "term": "替代选择",
+      "def": "用堆边写边读，使平均游程长度达到缓冲区容量两倍的方法。",
+      "chapterId": "ch04"
+    },
+    {
+      "term": "多阶段合并",
+      "def": "用不均匀分配让有限磁带轮流充当输出的合并策略。",
+      "chapterId": "ch04"
+    },
+    {
+      "term": "AVL 树",
+      "def": "每个节点左右子树高度差不超过 1 的二叉查找树。",
+      "chapterId": "ch05"
+    },
+    {
+      "term": "B 树",
+      "def": "每个节点可存多个键、多个孩子，所有叶子同层的多路查找树。",
+      "chapterId": "ch05"
+    },
+    {
+      "term": "装载因子",
+      "def": "散列表中键数与槽数之比。",
+      "chapterId": "ch06"
+    },
+    {
+      "term": "一次聚集",
+      "def": "线性探测把连续槽位占满、越聚越长的现象。",
+      "chapterId": "ch06"
+    },
+    {
+      "term": "墓碑",
+      "def": "开放地址法删除后留下的标记，保证探测链不被截断。",
+      "chapterId": "ch06"
+    },
+    {
+      "term": "倒排索引",
+      "def": "由辅助键值指向包含该值的主键列表的结构。",
+      "chapterId": "ch06"
+    }
+  ],
+  "patterns": {
+    "file": "patterns.md"
+  },
+  "cheatsheet": {
+    "file": "cheatsheet.md"
+  },
+  "quizzes": [
+    {
+      "id": "q01",
+      "chapterId": "ch01",
+      "type": "blank",
+      "question": "排列 4, 3, 2, 1 的逆序对数是多少？（填数字）",
+      "options": [],
+      "answer": "6",
+      "explain": "每一对都是逆序，共 C(4,2)=6 个，也等于插入排序的最坏移动次数。"
+    },
+    {
+      "id": "q02",
+      "chapterId": "ch01",
+      "type": "single",
+      "question": "A、A、B、B 四个字符共有多少种不同排列？",
+      "options": [
+        "4",
+        "6",
+        "12",
+        "24"
+      ],
+      "answer": 1,
+      "explain": "4!/(2!2!) = 24/4 = 6。"
+    },
+    {
+      "id": "q03",
+      "chapterId": "ch01",
+      "type": "single",
+      "question": "随机排列的期望升序游程段数是？",
+      "options": [
+        "n/2",
+        "(n+1)/2",
+        "log n",
+        "n"
+      ],
+      "answer": 1,
+      "explain": "期望升序游程数为 (n+1)/2，自然合并排序按游程合并。"
+    },
+    {
+      "id": "q04",
+      "chapterId": "ch02",
+      "type": "single",
+      "question": "对已经升序排列的数组取首元素为基准做快排，复杂度是？",
+      "options": [
+        "O(n)",
+        "O(n log n)",
+        "O(n²)",
+        "O(log n)"
+      ],
+      "answer": 2,
+      "explain": "每次划分一边空一边全，递归深度 n，总代价 n²。"
+    },
+    {
+      "id": "q05",
+      "chapterId": "ch02",
+      "type": "blank",
+      "question": "堆排序建堆的代价是 O(___)。（填字母 n 或 n log n）",
+      "options": [],
+      "answer": "n",
+      "explain": "自底向上建堆总代价 O(n)，因为大部分节点在下层、下沉距离短。"
+    },
+    {
+      "id": "q06",
+      "chapterId": "ch02",
+      "type": "single",
+      "question": "基数排序必须满足的性质是？",
+      "options": [
+        "稳定",
+        "原地",
+        "比较元素大小",
+        "递归"
+      ],
+      "answer": 0,
+      "explain": "从低位到高位，高位分配时必须保持低位结果的相对次序，所以必须稳定。"
+    },
+    {
+      "id": "q07",
+      "chapterId": "ch03",
+      "type": "blank",
+      "question": "5 个元素排序，最坏情况至少需要多少次比较？（填数字）",
+      "options": [],
+      "answer": "7",
+      "explain": "log2(5!) = log2 120 ≈ 6.91，向上取整 7，且 7 次可做到。"
+    },
+    {
+      "id": "q08",
+      "chapterId": "ch03",
+      "type": "single",
+      "question": "排序网络的核心优势是？",
+      "options": [
+        "比较次数最少",
+        "无分支、可并行",
+        "不需要额外空间",
+        "稳定"
+      ],
+      "answer": 1,
+      "explain": "网络结构固定，所有比较按层同时执行，适合硬件；比较次数通常更多。"
+    },
+    {
+      "id": "q09",
+      "chapterId": "ch03",
+      "type": "single",
+      "question": "0-1 原理的作用是？",
+      "options": [
+        "把任意输入化归为 0/1 输入来验证网络",
+        "证明快排最优",
+        "计算逆序对数",
+        "分析散列冲突"
+      ],
+      "answer": 0,
+      "explain": "只需验证 2^n 种 0/1 输入，若全排好则任意输入都排好。"
+    },
+    {
+      "id": "q10",
+      "chapterId": "ch04",
+      "type": "blank",
+      "question": "1000 个初始游程做 4 路合并，需要多少趟？（填数字）",
+      "options": [],
+      "answer": "5",
+      "explain": "4⁴=256 不够，4⁵=1024 够，所以 5 趟。"
+    },
+    {
+      "id": "q11",
+      "chapterId": "ch04",
+      "type": "single",
+      "question": "替代选择在随机输入下的平均游程长度约为缓冲区容量的多少倍？",
+      "options": [
+        "0.5",
+        "1",
+        "2",
+        "4"
+      ],
+      "answer": 2,
+      "explain": "Knuth 的分析给出平均约 2P，P 为缓冲区记录数，游程数因此减半。"
+    },
+    {
+      "id": "q12",
+      "chapterId": "ch04",
+      "type": "single",
+      "question": "多阶段合并主要解决什么问题？",
+      "options": [
+        "比较次数太多",
+        "磁带台数不足",
+        "内存太大",
+        "键值范围太小"
+      ],
+      "answer": 1,
+      "explain": "k 路合并需 k 台输入加 1 台输出，台数不够时用不均匀分配轮流用空带。"
+    },
+    {
+      "id": "q13",
+      "chapterId": "ch05",
+      "type": "blank",
+      "question": "在 1 到 9 的有序数组里二分查找 7，需要多少次比较？（填数字）",
+      "options": [],
+      "answer": "2",
+      "explain": "先比中间 5，7 大于 5；再在 6 到 9 中比中间 7，命中。"
+    },
+    {
+      "id": "q14",
+      "chapterId": "ch05",
+      "type": "single",
+      "question": "二叉查找树最坏情况下的查找代价是？",
+      "options": [
+        "O(1)",
+        "O(log n)",
+        "O(n)",
+        "O(n log n)"
+      ],
+      "answer": 2,
+      "explain": "按升序插入退化成链，查找退化为顺序扫描。"
+    },
+    {
+      "id": "q15",
+      "chapterId": "ch05",
+      "type": "single",
+      "question": "10 亿个键、每节点 100 个孩子的 B 树，大约几层？",
+      "options": [
+        "3",
+        "5",
+        "10",
+        "30"
+      ],
+      "answer": 1,
+      "explain": "log_100(10⁹) = 4.5，约 5 层；每层通常对应一次磁盘读。"
+    },
+    {
+      "id": "q16",
+      "chapterId": "ch06",
+      "type": "blank",
+      "question": "m = 13，键 44 的除法散列槽位是多少？（填数字）",
+      "options": [],
+      "answer": "5",
+      "explain": "44 = 3×13 + 5，余数 5。"
+    },
+    {
+      "id": "q17",
+      "chapterId": "ch06",
+      "type": "single",
+      "question": "链地址法在 α = 2 时，成功查找平均比较次数约为？",
+      "options": [
+        "1",
+        "2",
+        "4",
+        "8"
+      ],
+      "answer": 1,
+      "explain": "成功查找约 1 + α/2 = 2 次。"
+    },
+    {
+      "id": "q18",
+      "chapterId": "ch06",
+      "type": "single",
+      "question": "开放地址法删除元素时为什么需要墓碑？",
+      "options": [
+        "为了节省空间",
+        "为了保持探测链不断",
+        "为了提高散列速度",
+        "为了支持排序"
+      ],
+      "answer": 1,
+      "explain": "直接清空会截断后续键的探测链，使本来存在的键查找失败。"
+    },
+    {
+      "id": "q19",
+      "chapterId": "__all__",
+      "type": "single",
+      "question": "综合题：一个日志系统要按时间排序 10 GB 数据，内存只有 1 GB，最合理的方案是？",
+      "options": [
+        "直接快速排序",
+        "生成初始游程后用替代选择与多路合并",
+        "用散列表",
+        "用二叉查找树"
+      ],
+      "answer": 1,
+      "explain": "数据远大于内存必须外部排序；替代选择把平均游程做到 2P，多路合并减少趟数。快排装不下，散列与二叉查找树不解决排序。"
+    }
+  ],
+  "flashcards": [
+    {
+      "id": "f01",
+      "chapterId": "ch01",
+      "front": "逆序对是什么？平均有多少个？",
+      "back": "前大后小的一对位置；n 个元素的平均逆序对数为 n(n−1)/4。",
+      "tags": [
+        "组合性质"
+      ]
+    },
+    {
+      "id": "f02",
+      "chapterId": "ch01",
+      "front": "插入排序的移动次数等于什么？",
+      "back": "等于初始逆序对数，每次左移一格消除恰好一个逆序对。",
+      "tags": [
+        "组合性质"
+      ]
+    },
+    {
+      "id": "f03",
+      "chapterId": "ch01",
+      "front": "多重集排列的种数公式？",
+      "back": "n! 除以各重复组阶乘之积，n!/(n1!n2!…nk!)。",
+      "tags": [
+        "组合性质"
+      ]
+    },
+    {
+      "id": "f04",
+      "chapterId": "ch02",
+      "front": "五类内部排序是哪五类？",
+      "back": "插入、交换、选择、合并、分布。",
+      "tags": [
+        "排序"
+      ]
+    },
+    {
+      "id": "f05",
+      "chapterId": "ch02",
+      "front": "快排最坏 O(n²) 的典型触发条件？",
+      "back": "输入已有序却取首元素当基准，每次划分极不均衡。",
+      "tags": [
+        "排序"
+      ]
+    },
+    {
+      "id": "f06",
+      "chapterId": "ch02",
+      "front": "堆排序为什么最坏也是 O(n log n)？",
+      "back": "建堆 O(n)，之后每次下沉 O(log n)，共 n 次，与输入无关。",
+      "tags": [
+        "排序"
+      ]
+    },
+    {
+      "id": "f07",
+      "chapterId": "ch02",
+      "front": "哪种排序稳定且 O(n log n)，代价是什么？",
+      "back": "合并排序；代价是需要 O(n) 额外空间。",
+      "tags": [
+        "排序"
+      ]
+    },
+    {
+      "id": "f08",
+      "chapterId": "ch03",
+      "front": "比较排序的下界怎么推？",
+      "back": "比较树至少 n! 个叶子，高度 ≥ log2(n!)，约 n log2 n − 1.44n。",
+      "tags": [
+        "下界"
+      ]
+    },
+    {
+      "id": "f09",
+      "chapterId": "ch03",
+      "front": "5 个元素最坏最少比较几次？",
+      "back": "7 次，因为 log2 120 ≈ 6.91，向上取整。",
+      "tags": [
+        "下界"
+      ]
+    },
+    {
+      "id": "f10",
+      "chapterId": "ch03",
+      "front": "0-1 原理说的是什么？",
+      "back": "若排序网络能排好所有 2^n 种 0/1 输入，就能排好任意输入。",
+      "tags": [
+        "排序网络"
+      ]
+    },
+    {
+      "id": "f11",
+      "chapterId": "ch04",
+      "front": "外部排序的趟数公式？",
+      "back": "ceil(log_k R)，R 是初始游程数，k 是合并路数。",
+      "tags": [
+        "外部排序"
+      ]
+    },
+    {
+      "id": "f12",
+      "chapterId": "ch04",
+      "front": "替代选择的平均游程长度是多少？",
+      "back": "约 2P，P 是缓冲区可容纳的记录数。",
+      "tags": [
+        "外部排序"
+      ]
+    },
+    {
+      "id": "f13",
+      "chapterId": "ch04",
+      "front": "多阶段合并为什么需要不均匀分配？",
+      "back": "磁带台数有限，需要始终留一台空带当输出，按 Fibonacci 式分配可做到。",
+      "tags": [
+        "外部排序"
+      ]
+    },
+    {
+      "id": "f14",
+      "chapterId": "ch05",
+      "front": "顺序查找与二分查找的平均代价？",
+      "back": "顺序 (n+1)/2；二分约 log2 n，但要求有序且可随机访问。",
+      "tags": [
+        "查找"
+      ]
+    },
+    {
+      "id": "f15",
+      "chapterId": "ch05",
+      "front": "AVL 树的高度上界？",
+      "back": "约 1.44 log2(n+2) − 0.33，最坏也有对数级保证。",
+      "tags": [
+        "查找"
+      ]
+    },
+    {
+      "id": "f16",
+      "chapterId": "ch05",
+      "front": "B 树为什么适合数据库索引？",
+      "back": "扇出 m 大使层数为 log_m n，每层一次磁盘读，I/O 次数远少于二叉树。",
+      "tags": [
+        "查找"
+      ]
+    },
+    {
+      "id": "f17",
+      "chapterId": "ch06",
+      "front": "链地址法的平均查找长度？",
+      "back": "成功约 1 + α/2，失败约 α，α 是装载因子。",
+      "tags": [
+        "散列"
+      ]
+    },
+    {
+      "id": "f18",
+      "chapterId": "ch06",
+      "front": "线性探测的平均查找长度与 α 的关系？",
+      "back": "成功约 (1/2)(1 + 1/(1−α))，α 趋近 1 时急剧恶化。",
+      "tags": [
+        "散列"
+      ]
+    }
+  ]
+}

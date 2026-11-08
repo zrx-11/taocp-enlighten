@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>计算机程序设计艺术 卷4B：生成所有元组和排列</title>
+<style>
+:root{
+  --bg:#f7f7f8; --panel:#ffffff; --text:#1f2328; --muted:#6b7280;
+  --accent:#2563eb; --accent-soft:#dbeafe; --border:#e5e7eb;
+  --ok:#16a34a; --bad:#dc2626; --code-bg:#f3f4f6;
+}
+[data-theme="dark"]{
+  --bg:#111318; --panel:#1a1d24; --text:#e5e7eb; --muted:#9ca3af;
+  --accent:#60a5fa; --accent-soft:#1e3a5f; --border:#2d333d;
+  --ok:#4ade80; --bad:#f87171; --code-bg:#20242c;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  background:var(--bg);color:var(--text);line-height:1.7;font-size:15px}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:290px;flex:none;background:var(--panel);border-right:1px solid var(--border);
+  padding:14px;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sidebar h1{font-size:17px;margin:2px 0 2px}
+.sidebar .sub{font-size:12px;color:var(--muted);margin-bottom:10px}
+#q{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);margin-bottom:10px}
+.nav-sec{font-size:12px;color:var(--muted);margin:12px 0 4px;text-transform:uppercase;letter-spacing:.4px}
+.nav-item{display:block;padding:5px 10px;border-radius:6px;color:var(--text);font-size:14px}
+.nav-item:hover{background:var(--accent-soft);text-decoration:none}
+.nav-item.active{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.nav-item .done{float:right;color:var(--ok);font-size:12px}
+#nav-toggle{display:none}
+.main{flex:1;min-width:0;padding:28px 40px 80px;max-width:920px}
+.page h1{font-size:26px;border-bottom:2px solid var(--border);padding-bottom:8px;margin-top:0}
+.page h2{font-size:20px;margin-top:26px}
+.page h3{font-size:17px;margin-top:22px}
+.page table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px}
+.page th,.page td{border:1px solid var(--border);padding:6px 10px;text-align:left}
+.page th{background:var(--code-bg)}
+.page code{background:var(--code-bg);padding:2px 5px;border-radius:4px;font-size:.9em}
+.page pre{background:var(--code-bg);padding:12px;border-radius:8px;overflow-x:auto;font-size:13px}
+.page pre code{background:none;padding:0}
+.page blockquote{border-left:4px solid var(--accent);margin:12px 0;padding:6px 14px;background:var(--accent-soft);border-radius:0 6px 6px 0}
+.page blockquote blockquote{border-color:var(--muted)}
+.page img{max-width:100%}
+.mermaid{background:var(--code-bg);padding:14px;border-radius:8px;overflow-x:auto;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;white-space:pre;color:var(--muted)}
+.mermaid-hint{font-size:12px;color:var(--muted);margin:4px 0 14px}
+svg{max-width:100%;height:auto}
+.quiz-item{border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin:14px 0;background:var(--panel)}
+.quiz-q{margin:0 0 8px;font-weight:500}
+.quiz-opts label{display:block;padding:4px 0;cursor:pointer}
+.quiz-blank{width:60%;padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text)}
+.quiz-check{margin-top:10px;padding:6px 16px;border:none;border-radius:6px;background:var(--accent);color:#fff;cursor:pointer}
+.quiz-feedback{margin-left:12px;font-size:13px}
+.fb-ok{color:var(--ok)}.fb-bad{color:var(--bad)}
+.quiz-explain{margin-top:8px;font-size:13px;color:var(--muted);border-top:1px dashed var(--border);padding-top:6px}
+.flashcard{perspective:1200px;margin:24px auto;max-width:520px;cursor:pointer;user-select:none}
+.fc-inner{position:relative;width:100%;height:240px;transform-style:preserve-3d;transition:transform .5s}
+.flashcard.flip .fc-inner{transform:rotateY(180deg)}
+.fc-front,.fc-back{position:absolute;inset:0;backface-visibility:hidden;display:flex;align-items:center;justify-content:center;
+  padding:22px;border-radius:14px;border:1px solid var(--border);background:var(--panel);font-size:16px;text-align:center}
+.fc-back{transform:rotateY(180deg);background:var(--accent-soft);color:var(--text)}
+.card-controls{display:flex;gap:14px;align-items:center;margin:12px 0;flex-wrap:wrap}
+.card-actions{display:flex;gap:12px;justify-content:center}
+.card-actions button{padding:8px 22px;border:none;border-radius:8px;cursor:pointer;font-size:14px}
+#card-known-btn{background:var(--ok);color:#fff}
+#card-again-btn{background:var(--bad);color:#fff}
+.card-counts{color:var(--muted);font-size:13px}
+.path-step{margin:8px 0;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--panel)}
+.path-step.passed{border-color:var(--ok)}
+#glossary-filter{width:100%;max-width:380px;padding:7px 10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);margin-bottom:10px}
+#glossary-list li{padding:6px 0;border-bottom:1px dashed var(--border)}
+.glossary-ref{color:var(--muted);font-size:12px}
+.search-hit{margin:10px 0}
+.topbar{position:sticky;top:0;background:var(--bg);padding:8px 0;display:flex;justify-content:flex-end;z-index:10}
+#theme-btn{border:1px solid var(--border);background:var(--panel);color:var(--text);border-radius:8px;padding:5px 12px;cursor:pointer;white-space:nowrap}
+#progress-bar{height:5px;background:var(--border);border-radius:3px;margin:8px 0;overflow:hidden}
+#progress-bar>div{height:100%;width:0;background:var(--accent);transition:width .3s}
+.empty{color:var(--muted);padding:20px 0}
+@media print{.sidebar,.topbar,.quiz-actions,.card-actions,.card-controls{display:none!important}.main{max-width:none;padding:0}}
+@media (max-width:760px){.sidebar{width:100%;height:auto;position:static;padding:10px 14px}
+  #nav{display:none}.sidebar.open #nav{display:block}
+  #nav-toggle{display:block;width:100%;padding:8px 10px;margin:4px 0;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:14px;text-align:left;cursor:pointer}
+  .layout{flex-direction:column}.main{padding:16px}}
+</style>
+<style id="mermaid-fallback">
+.mermaid:not([data-rendered="1"]){white-space:pre-wrap;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.45;background:#f6f8fa;border:1px solid #d8dee4;border-left:4px solid #8b949e;border-radius:6px;padding:10px 12px;margin:12px 0;overflow-x:auto;color:#24292f}
+.mermaid:not([data-rendered="1"])::before{content:"图示源码（联网时自动渲染为图形）";display:block;font-family:var(--sans,inherit);font-size:11px;color:#8b949e;margin-bottom:6px;letter-spacing:.02em}
+body[data-theme="dark"] .mermaid:not([data-rendered="1"]){background:#161b22;border-color:#30363d;color:#c9d1d9}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <h1>计算机程序设计艺术 卷4B：生成所有元组和排列</h1>
+    <div class="sub">n 元组与排列：两种最基本的「全部可能」</div>
+    <div id="progress-bar"><div id="progress-fill"></div></div>
+    <div class="sub" id="progress-label">进度 0%</div>
+    <input id="q" type="search" placeholder="搜索章节 / 概念 / 术语 / 全文…">
+    <nav id="nav"></nav>
+  </aside>
+  <main class="main">
+    <div class="topbar"><button id="theme-btn">🌙 深色</button></div>
+    <div id="view" class="page"></div>
+  </main>
+</div>
+<script>
+const DATA = {"manifest": {"slug": "taocp-v4b", "title": "计算机程序设计艺术 卷4B：生成所有元组和排列", "subtitle": "n 元组与排列：两种最基本的「全部可能」", "book": {"title": "计算机程序设计艺术 生成所有元组和排列（第4卷 第2册 双语版）", "author": "Donald E. Knuth（高德纳）著", "source": ["计算机程序设计艺术 生成所有元组和排列（第4卷 第2册 双语版）.pdf（扫描版 272 页）"]}, "audience": "读完卷4A 第 7.2 节概览、想动手实现生成算法的读者", "goal": "系统掌握：能实现 n 元组与排列的字典序、格雷码、相邻交换三类生成算法，并能说清各自的代价与不变式。", "companion": "taocp-v4b学习伴侣.html", "learningPath": [{"step": "01", "title": "生成所有 n 元组", "chapterIds": ["ch01"], "checkpoint": "能手写 3 位格雷码，说明它相对二进制计数的优势"}, {"step": "02", "title": "生成所有排列", "chapterIds": ["ch02"], "checkpoint": "能用 next 算法从 1 2 3 走到 3 2 1，能算一个排列的排名"}], "chapters": [{"id": "ch01", "title": "第 1 章：生成所有 n 元组", "file": "chapters/ch01-生成n元组.md", "difficulty": 2}, {"id": "ch02", "title": "第 2 章：生成所有排列", "file": "chapters/ch02-生成排列.md", "difficulty": 3}], "concepts": [{"id": "c01", "title": "格雷码", "file": "concepts/gray-code.md", "chapterIds": ["ch01"]}, {"id": "c02", "title": "字典序与阶乘数系统", "file": "concepts/lexicographic-factorial.md", "chapterIds": ["ch02"]}, {"id": "c03", "title": "相邻交换生成", "file": "concepts/adjacent-swap-generation.md", "chapterIds": ["ch02"]}], "glossary": [{"term": "n 元组", "def": "由 n 个位置组成、每个位置取一个值的序列，各位置独立。", "chapterId": "ch01"}, {"term": "混合基", "def": "每个位置有不同进制，例如小时与分钟。", "chapterId": "ch01"}, {"term": "格雷码", "def": "相邻两个编码只差一位的编码序列。", "chapterId": "ch01"}, {"term": "反射构造", "def": "n 位格雷码由 n−1 位格雷码加 0 前缀与倒序加 1 前缀拼成。", "chapterId": "ch01"}, {"term": "字典序", "def": "按第一个不同位置的元素大小决定先后。", "chapterId": "ch02"}, {"term": "阶乘数系统", "def": "第 i 位权为 i! 的进位制，用来给排列编号。", "chapterId": "ch02"}, {"term": "排名", "def": "一个排列在字典序中的序号，从 0 开始。", "chapterId": "ch02"}, {"term": "相邻交换", "def": "每次只交换相邻两个元素的生成方式。", "chapterId": "ch02"}, {"term": "Heap 算法", "def": "用 n!−1 次相邻交换生成全部排列的递归算法。", "chapterId": "ch02"}, {"term": "圆排列", "def": "把首尾视为相邻的排列，种数为 (n−1)!。", "chapterId": "ch02"}], "patterns": {"file": "patterns.md"}, "cheatsheet": {"file": "cheatsheet.md"}, "quizzes": [{"id": "q01", "chapterId": "ch01", "type": "blank", "question": "3 位二进制元组共有多少个？（填数字）", "options": [], "answer": "8", "explain": "2^3 = 8，从 000 到 111。"}, {"id": "q02", "chapterId": "ch01", "type": "single", "question": "3 位格雷码序列的第五个（从 0 数）编码是？", "options": ["010", "110", "111", "100"], "answer": 1, "explain": "序列为 000、001、011、010、110、111、101、100，第五个是 110。"}, {"id": "q03", "chapterId": "ch01", "type": "single", "question": "格雷码相对普通二进制计数的主要优势是？", "options": ["数值更小", "相邻只差一位", "位数更少", "可以排序"], "answer": 1, "explain": "相邻编码只差一位，生成下一个只需翻转一位，也避免硬件多位同时跳变。"}, {"id": "q04", "chapterId": "ch02", "type": "blank", "question": "1 2 3 的字典序下一个排列是什么？（写成三个数字，不加空格）", "options": [], "answer": "132", "explain": "最右升序对 2<3，交换得 132，右侧单元素无需反转。"}, {"id": "q05", "chapterId": "ch02", "type": "single", "question": "4 个元素的圆排列有多少种？", "options": ["4", "6", "12", "24"], "answer": 1, "explain": "(4−1)! = 6，旋转视为同一种。"}, {"id": "q06", "chapterId": "ch02", "type": "single", "question": "Heap 算法生成 n 个元素的全排列，共做多少次交换？", "options": ["n", "n!−1", "n!", "n log n"], "answer": 1, "explain": "每输出一个新排列至少一次交换，算法每次交换都产生新排列，故为 n!−1。"}, {"id": "q07", "chapterId": "__all__", "type": "single", "question": "综合题：要随机取 10 个元素全排列中的第 500000 个，最直接的做法是？", "options": ["用 next 算法走 500000 步", "用阶乘数系统按排名直接还原", "用 Heap 算法生成后取第 500000 个", "随机洗牌直到命中"], "answer": 1, "explain": "阶乘数系统可按排名 O(n²) 直接还原，不必遍历；10! = 3,628,800，500000 在范围内。"}], "flashcards": [{"id": "f01", "chapterId": "ch01", "front": "k 进制 n 位元组共有多少个？", "back": "k^n 个，每位独立取 k 种值。", "tags": ["元组"]}, {"id": "f02", "chapterId": "ch01", "front": "二进制转格雷码的公式？", "back": "g = b ⊕ (b >> 1)，即第 i 位等于 b 的第 i 位与第 i+1 位异或。", "tags": ["格雷码"]}, {"id": "f03", "chapterId": "ch01", "front": "格雷码的反射构造怎么描述？", "back": "n 位 = 0 前缀的 n−1 位格雷码 + 1 前缀的 n−1 位格雷码倒序。", "tags": ["格雷码"]}, {"id": "f04", "chapterId": "ch02", "front": "求字典序下一个排列的四步？", "back": "找最右升序对 i、找最右大于 a[i] 的 j、交换、反转 i 右侧。", "tags": ["排列"]}, {"id": "f05", "chapterId": "ch02", "front": "排列的排名怎么算？", "back": "对每位数「右边比它小的元素个数」，乘以对应阶乘权，再加总；从 0 开始。", "tags": ["排列"]}, {"id": "f06", "chapterId": "ch02", "front": "Heap 算法做多少次交换？为什么？", "back": "n!−1 次；每次交换都产生一个新排列，新排列总数是 n!−1。", "tags": ["排列"]}, {"id": "f07", "chapterId": "ch02", "front": "圆排列与带重复元素排列的种数？", "back": "圆排列 (n−1)!；带重复 n!/(n1!n2!…)。", "tags": ["排列"]}]}, "pages": {"ch01": {"html": "<h1>第 1 章：生成所有 n 元组<\/h1>\n<ul><li>\n<strong>难度<\/strong>：★★☆ | <strong>预估学时<\/strong>：4 小时 | <strong>前置<\/strong>：卷4A 第 4 章；二进制\n<\/ul>\n<h2>学习目标<\/h2>\n<p>学完本章，你能：<\/p>\n<ol><li>\n说出 k 进制 n 位元组的总数，并用「里程表」方式逐一生成。\n<\/li><li>\n用 g = b ⊕ (b&gt;&gt;1) 把普通二进制转成格雷码，并说明反向转换。\n<\/li><li>\n解释格雷码为什么让「生成下一个」的代价摊还到常数。\n<\/li><li>\n处理每一位进制不同的混合基计数。\n<\/ol>\n<h2>一句话核心<\/h2>\n<p>n 元组的生成本质就是<strong>计数器<\/strong>：每一位独立进位。全部技巧都围绕「怎样让每次进位只改一位」。<\/p>\n<h2>零基础讲解<\/h2>\n<h3>概念 1：元组与计数（难度：基础）<\/h3>\n<p>n 元组是 n 个位置各取一个值的序列。若每位有 k 种取值，总数是 k^n。<\/p>\n<p><strong>实例<\/strong>：3 位二进制元组，k=2、n=3，共 8 个：000、001、010、011、100、101、110、111。<\/p>\n<p><strong>里程表方式<\/strong>：把最低位加一，满 k 进位到高位。汽车里程表就是这么工作的。<\/p>\n<p><strong>代价<\/strong>：单次「加一」平均摊还 O(1)。因为最低位每步都变、次低位每两步变一次、第 i 位每 k^i 步变一次，总变化次数是 n + n/k + n/k² + … &lt; 2n。<\/p>\n<h3>概念 2：格雷码（难度：进阶）<\/h3>\n<p>二进制计数有时一次要改多位（011 → 100 改了三位）。格雷码要求相邻只差一位。<\/p>\n<p><strong>3 位格雷码<\/strong>：000、001、011、010、110、111、101、100。<\/p>\n<p><strong>转换公式<\/strong>：g = b ⊕ (b &gt;&gt; 1)。也就是格雷码的第 i 位 = 二进制第 i 位与第 i+1 位的异或。<\/p>\n<p><strong>实例<\/strong>：b = 6（110）。b&gt;&gt;1 = 011，异或得 101 = 5。序列里第 6 个（从 0 数）正是 101 ✓。<\/p>\n<p><strong>反向转换<\/strong>：b 的最高位等于 g 的最高位；之后 b 的第 i 位 = b 的第 i+1 位 ⊕ g 的第 i 位。写成循环就是不断「异或右移」。<\/p>\n<p><strong>为什么省<\/strong>：相邻格雷码只差一位，生成时只需翻转一个元素，O(1)；而且这一位是哪一位可以直接从步数算出来。<\/p>\n<h3>概念 3：反射构造（难度：进阶）<\/h3>\n<p>不用公式也能生成：n 位格雷码由两部分拼成——<\/p>\n<ol><li>\nn−1 位格雷码，前面加 0；\n<\/li><li>\nn−1 位格雷码<strong>倒序<\/strong>，前面加 1。\n<\/ol>\n<p><strong>实例<\/strong>：1 位是 0、1；2 位是 00、01、11、10；3 位是 000、001、011、010、110、111、101、100 ✓。<\/p>\n<p><strong>为什么倒序<\/strong>：正序末尾是 0 开头的最大的一个，倒序开头是 1 开头的最大的一个，两者只差最高位，衔接处也只改一位。<\/p>\n<h3>概念 4：混合基（难度：进阶）<\/h3>\n<p>每一位的进制不同，例如时间：时（24）、分（60）、秒（60）。总数是各位进制之积。<\/p>\n<p><strong>实例<\/strong>：两位、第一位 3 种取值、第二位 4 种取值，共 12 个元组。生成时低位满 4 进一，高位满 3 归零。<\/p>\n<p><strong>用途<\/strong>：多维数组的下标展开、密码表遍历、参数组合枚举。<\/p>\n<h2>图示<\/h2>\n<div class=\"mermaid\" data-src=\"1\">flowchart TD\n    S[当前元组] --&gt; L[最低位加一]\n    L --&gt; C{满 k 了吗}\n    C -- 否 --&gt; O[输出新元组]\n    C -- 是 --&gt; R[本位归零 进位到高位]\n    R --&gt; C\n    O --&gt; S<\/div><p class=\"mermaid-hint\">↑ Mermaid 图示：联网时自动渲染为图表；离线时请阅读上方源码与正文说明。<\/p>\n<p><strong>看图说明<\/strong>：进位可能连续发生，但摊还下来每次输出只改常数位。这就是「摊还 O(1)」的来源。<\/p>\n<h2>类比与实例<\/h2>\n<ul><li>\n类比：n 元组生成像里程表，低位转一圈高位进一格；格雷码像一种特制的表，每转一格只有一个数字变化。\n<\/li><li>\n类比失效：里程表的数字是十进制，格雷码的「一位变化」是二进制位；十进制下不存在「相邻只改一个数字」的完整循环（除了一部分特殊构造）。\n<\/ul>\n<p><strong>实例（格雷码生成）<\/strong>：从 0 数到 7，用 g = b⊕(b&gt;&gt;1) 得 0、1、3、2、6、7、5、4，写成三位二进制就是 000、001、011、010、110、111、101、100，相邻确实只差一位。<\/p>\n<h2>常见误解<\/h2>\n<ul><li>\n<strong>别以为格雷码是「另一种二进制数」<\/strong>——实际上它只是一个编码序列，同一个数值在格雷码下写法不同。\n<\/li><li>\n<strong>别以为二进制计数每次只改一位<\/strong>——实际上 011 到 100 改了三位，这正是格雷码要解决的问题。\n<\/li><li>\n<strong>别以为混合基很少用<\/strong>——实际上多维数组、日期时间、参数组合都是混合基。\n<\/ul>\n<h2>自测题（答案）<\/h2>\n<ol><li>\n填空题：3 位二进制元组共有多少个？（填数字）\n<p>（答案：8；解析：2^3 = 8，从 000 到 111。）<\/p>\n<\/ol>\n<ol><li>\n单选题：3 位格雷码序列的第五个（从 0 数）编码是？\n<p>A. 010 B. 110 C. 111 D. 100 （答案：B；解析：序列 000、001、011、010、110、111、101、100，第五个是 110。）<\/p>\n<\/ol>\n<ol><li>\n简答题：格雷码相对普通二进制计数，优势在哪？\n<p>（答案：相邻两个编码只差一位，生成下一个只需翻转一个元素，代价 O(1)，且硬件上不会出现多位同时跳变的毛刺。）<\/p>\n<\/ol>\n<h2>复习锚点<\/h2>\n<ul><li>\nk 进制 n 位元组共 k^n 个，按里程表进位。\n<\/li><li>\n格雷码 g = b⊕(b&gt;&gt;1)，相邻只差一位。\n<\/li><li>\n反射构造：0 前缀正序 + 1 前缀倒序。\n<\/ul>", "kind": "chapter", "title": "第 1 章：生成所有 n 元组"}, "ch02": {"html": "<h1>第 2 章：生成所有排列<\/h1>\n<ul><li>\n<strong>难度<\/strong>：★★★ | <strong>预估学时<\/strong>：6 小时 | <strong>前置<\/strong>：第 1 章；阶乘\n<\/ul>\n<h2>学习目标<\/h2>\n<p>学完本章，你能：<\/p>\n<ol><li>\n用字典序的 next 算法从 1 2 3 一路走到 3 2 1。\n<\/li><li>\n用阶乘数系统给任意排列算排名，也能从排名还原排列。\n<\/li><li>\n说清 Heap 算法为什么只用 n!−1 次交换。\n<\/li><li>\n区分全排列、圆排列、带重复元素的排列。\n<\/ol>\n<h2>一句话核心<\/h2>\n<p>排列生成的两条主线是<strong>字典序<\/strong>（能排名、能随机访问）与<strong>相邻交换<\/strong>（每次改动最小）；两者的交点就是阶乘数系统。<\/p>\n<h2>零基础讲解<\/h2>\n<h3>概念 1：总数与字典序（难度：基础）<\/h3>\n<p>n 个不同元素有 n! 种排列。字典序按第一个不同位置的大小决定先后。<\/p>\n<p><strong>1 2 3 的六个排列<\/strong>：123、132、213、231、312、321。<\/p>\n<p><strong>next 算法<\/strong>（求字典序的下一个）：<\/p>\n<ol><li>\n从右往左找第一个「比右边小」的位置 i（即 a[i] &lt; a[i+1]）。\n<\/li><li>\n从右往左找第一个「比 a[i] 大」的位置 j。\n<\/li><li>\n交换 a[i] 与 a[j]。\n<\/li><li>\n把 i 右边的部分整体反转（原来递减，反转后递增）。\n<\/ol>\n<p><strong>实例<\/strong>：从 1 2 3 出发。<\/p>\n<ul><li>\ni = 2（2 &lt; 3），j = 3，交换得 1 3 2，右侧只有一个元素，反转不变 → 132 ✓。\n<\/li><li>\n从 1 3 2：i = 1（1 &lt; 3），j = 3（2 &gt; 1），交换得 2 3 1，反转右侧 3 1 得 1 3 → 231 ✓。\n<\/ul>\n<p><strong>为什么第 4 步是反转<\/strong>：i 右边原本是递减的（因为 i 是最右的升序对），反转后变成递增，正是字典序最小的后缀。<\/p>\n<h3>概念 2：阶乘数系统与排名（难度：进阶）<\/h3>\n<p>给排列编号，用「第 i 位有几个比它小的元素还在右边」作为该位的数字。<\/p>\n<p><strong>排名公式<\/strong>：rank = Σ c(i) × (n−i)!，其中 c(i) 是位置 i 右边比 a[i] 小的元素个数。<\/p>\n<p><strong>实例<\/strong>：排列 2 3 1。<\/p>\n<ul><li>\n位置 1 是 2，右边比它小的有 1，c=1，权 (3−1)! = 2 → 2\n<\/li><li>\n位置 2 是 3，右边比它小的有 1，c=1，权 (3−2)! = 1 → 1\n<\/li><li>\n位置 3 是 1，右边没有，c=0\n<\/li><li>\n排名 = 2 + 1 = 3（从 0 开始），即第 4 个，与 123、132、213、231 的顺序一致 ✓。\n<\/ul>\n<p><strong>反向<\/strong>：已知排名 r，从高位开始，第 i 位取「第 r / (n−i)! 个还没用过的元素」，余数继续。<\/p>\n<p><strong>为什么用阶乘数系统<\/strong>：它把「第几个排列」变成一个可计算的数，不需要从头数。n = 10 时 10! = 3,628,800，仍在整数范围内；n = 20 就超出 64 位。<\/p>\n<h3>概念 3：Heap 算法（难度：高难）<\/h3>\n<p>Heap 算法递归生成排列，只用相邻交换，总交换次数恰好 n!−1。<\/p>\n<p><strong>结构<\/strong>：<\/p>\n<ul><li>\nn = 1 时输出唯一排列。\n<\/li><li>\nn &gt; 1 时，对 i 从 1 到 n：先递归生成前 n−1 个元素的排列；若 n 为奇数，交换第 1 与第 n 个；若 n 为偶数，交换第 i 与第 n 个。\n<\/ul>\n<p><strong>为什么交换次数正好 n!−1<\/strong>：每输出一个新排列至少需要一次交换，而算法每次交换都产生一个新排列，所以交换次数等于「排列数减一」。<\/p>\n<p><strong>实例<\/strong>：n = 3。递归 n=2 输出 123、213；交换 1 与 3 得 321，递归输出 321、231；交换 1 与 3 得 132，递归输出 132、312。共 6 个，5 次交换 ✓。<\/p>\n<h3>概念 4：圆排列与重复元素（难度：进阶）<\/h3>\n<ul><li>\n<strong>圆排列<\/strong>：首尾相接，旋转视为同一种，种数为 (n−1)!。因为固定一个元素的位置后，其余 (n−1) 个随便排。\n<\/li><li>\n<strong>带重复元素<\/strong>：n 个元素中有重复组，种数为 n!/(n1!n2!…)。生成时要跳过重复分支，否则会输出重复排列。\n<\/ul>\n<p><strong>实例<\/strong>：A、A、B 的排列是 3!/2! = 3，即 AAB、ABA、BAA。<\/p>\n<h2>图示<\/h2>\n<div class=\"mermaid\" data-src=\"1\">flowchart TD\n    P[当前排列] --&gt; F[从右找第一个升序对 i]\n    F --&gt; G[从右找第一个大于 a i 的位置 j]\n    G --&gt; S[交换 i 与 j]\n    S --&gt; R[反转 i 右侧]\n    R --&gt; N[得到字典序下一个]\n    P --&gt; K[阶乘数系统]\n    K --&gt; ID[排名与还原]<\/div><p class=\"mermaid-hint\">↑ Mermaid 图示：联网时自动渲染为图表；离线时请阅读上方源码与正文说明。<\/p>\n<p><strong>看图说明<\/strong>：左侧是「一步一步走」，右侧是「直接跳到第 k 个」。两条路都可行，选哪条取决于你要遍历还是要随机访问。<\/p>\n<h2>类比与实例<\/h2>\n<ul><li>\n类比：字典序生成像翻字典，每次只改动尽量靠后的部分；阶乘数系统像给每个词编一个号码，不用翻就能直接跳到那一页。\n<\/li><li>\n类比失效：字典的编号是人为定的，排列的编号由阶乘权决定；n 一大，号码就超过整数范围。\n<\/ul>\n<p><strong>实例（还原排列）<\/strong>：n = 4，排名 5（从 0 开始），还原。<\/p>\n<ul><li>\n5 / 3! = 0 余 5，第 1 位取第 0 个未用元素 → 1\n<\/li><li>\n5 / 2! = 2 余 1，第 2 位取第 2 个未用元素（未用 2,3,4，第 2 个是 4）→ 4\n<\/li><li>\n1 / 1! = 1 余 0，第 3 位取第 1 个未用元素（未用 2,3，第 1 个是 3）→ 3\n<\/li><li>\n最后剩 2 → 2\n<p>排列为 1 4 3 2。核对：4 个元素排名 5，前五个是 1234、1243、1324、1342、1423，第六个是 1432 ✓。<\/p>\n<\/ul>\n<h2>常见误解<\/h2>\n<ul><li>\n<strong>别以为 next 算法要重新排序后缀<\/strong>——实际上后缀原本递减，只需反转，O(n) 而不是 O(n log n)。\n<\/li><li>\n<strong>别以为 Heap 算法交换次数多<\/strong>——实际上恰好 n!−1 次，已经是最少。\n<\/li><li>\n<strong>别以为圆排列就是「少一个元素」<\/strong>——实际上它是把旋转视为等价，除以 n，得 (n−1)!。\n<\/ul>\n<h2>自测题（答案）<\/h2>\n<ol><li>\n填空题：1 2 3 的字典序下一个排列是什么？（写成三个数字，不加空格）\n<p>（答案：132；解析：最右升序对是 2&lt;3，交换得 132，右侧单元素无需反转。）<\/p>\n<\/ol>\n<ol><li>\n单选题：4 个元素的圆排列有多少种？\n<p>A. 4 B. 6 C. 12 D. 24 （答案：B；解析：(4−1)! = 3! = 6，旋转视为同一种。）<\/p>\n<\/ol>\n<ol><li>\n简答题：Heap 算法生成 n 个元素的全排列，一共做多少次交换？\n<p>（答案：n!−1 次。每输出一个新排列至少一次交换，而算法每次交换都产生新排列，故交换次数等于排列数减一。）<\/p>\n<\/ol>\n<h2>复习锚点<\/h2>\n<ul><li>\n全排列 n!，圆排列 (n−1)!，带重复 n!/(n1!…)。\n<\/li><li>\nnext：找最右升序对、交换、反转后缀。\n<\/li><li>\n排名用阶乘数系统，n 一大就溢出。\n<\/ul>", "kind": "chapter", "title": "第 2 章：生成所有排列"}, "c01": {"html": "<h1>格雷码<\/h1>\n<ul><li>\n<strong>难度<\/strong>：基础 | <strong>涉及章节<\/strong>：第 1 章\n<\/ul>\n<h2>一句话定义<\/h2>\n<p>格雷码是一种二进制编码序列，任意相邻两个编码只差一位；把普通二进制 b 转成格雷码用 g = b ⊕ (b&gt;&gt;1)。<\/p>\n<h2>为什么重要<\/h2>\n<p>它把「计数器每次可能改多位」变成「每次只改一位」。这既省生成代价，也避免硬件多位同时跳变产生的毛刺；在旋转编码器、卡诺图、状态机编码里都能见到。<\/p>\n<h2>图示<\/h2>\n<div class=\"mermaid\" data-src=\"1\">flowchart LR\n    B0[0 000] --&gt; B1[1 001] --&gt; B2[3 011] --&gt; B3[2 010]\n    B3 --&gt; B4[6 110] --&gt; B5[7 111] --&gt; B6[5 101] --&gt; B7[4 100]<\/div><p class=\"mermaid-hint\">↑ Mermaid 图示：联网时自动渲染为图表；离线时请阅读上方源码与正文说明。<\/p>\n<p>看图：每一步只有一个位翻转，走完一圈回到起点也只差一位。<\/p>\n<h2>详解<\/h2>\n<p><strong>转换<\/strong>：g = b ⊕ (b &gt;&gt; 1)。 <strong>逆转换<\/strong>：从最高位开始，b 的最高位等于 g 的最高位；逐位往下，b(i) = b(i+1) ⊕ g(i)。<\/p>\n<p><strong>实例<\/strong>：b = 6（110），b&gt;&gt;1 = 011，g = 101（5）。<\/p>\n<p><strong>反射构造<\/strong>：n 位格雷码 = 0 前缀的 (n−1) 位格雷码 + 1 前缀的 (n−1) 位格雷码倒序。3 位得 000、001、011、010、110、111、101、100。<\/p>\n<p><strong>代价<\/strong>：生成下一个只需翻转一位，O(1)；总翻转次数约 2^n，摊还 O(1)。<\/p>\n<h2>常见误解<\/h2>\n<ul><li>\n别以为格雷码是「另一种数值」：它只是编码序列，数值不变，写法变了。\n<\/li><li>\n别以为任意长度都能「相邻只差一位且首尾也差一位」：循环格雷码需要额外的构造（如平衡格雷码）。\n<\/ul>\n<h2>在书中出现的脉络<\/h2>\n<table><thead><tr><th>章节<\/th><th>语境<\/th><th>关键结论<\/th><\/tr><\/thead><tbody><tr><td>7.2.1.1<\/td><td>生成 n 元组<\/td><td>二进制计数与格雷码<\/td><\/tr><tr><td>7.2.1.2<\/td><td>生成排列<\/td><td>相邻交换的思想来源<\/td><\/tr><\/tbody><\/table>\n<h2>相关概念<\/h2>\n<ul><li>\n后续：<a href=\"#\" target=\"_blank\" rel=\"noopener\">相邻交换生成<\/a>\n<\/ul>", "kind": "concept", "title": "格雷码"}, "c02": {"html": "<h1>字典序与阶乘数系统<\/h1>\n<ul><li>\n<strong>难度<\/strong>：进阶 | <strong>涉及章节<\/strong>：第 2 章\n<\/ul>\n<h2>一句话定义<\/h2>\n<p>字典序按「第一个不同位置的大小」排序；阶乘数系统用「右边比它小的元素个数 × 阶乘权」给排列编号，使「第几个排列」可算。<\/p>\n<h2>为什么重要<\/h2>\n<p>它把「遍历所有排列」和「直接取第 k 个排列」统一起来：遍历用 next，随机访问用编号。密码学、组合测试、随机抽样都要用到。<\/p>\n<h2>图示<\/h2>\n<div class=\"mermaid\" data-src=\"1\">flowchart TD\n    P[排列 2 3 1] --&gt; C[逐位数右边比它小的]\n    C --&gt; D[1 和 1]\n    D --&gt; W[乘 2 的阶乘 与 1 的阶乘]\n    W --&gt; R[排名 3]\n    R --&gt; N[从排名还原排列]<\/div><p class=\"mermaid-hint\">↑ Mermaid 图示：联网时自动渲染为图表；离线时请阅读上方源码与正文说明。<\/p>\n<p>看这条链：排列 → 数字 → 排列，两个方向都可算。<\/p>\n<h2>详解<\/h2>\n<p><strong>next 四步<\/strong>：找最右升序对 i；找最右大于 a[i] 的 j；交换；反转 i 右侧。<\/p>\n<p><strong>排名公式<\/strong>：rank = Σ c(i)×(n−i)!，c(i) 是位置 i 右边比 a[i] 小的元素数。<\/p>\n<p><strong>实例<\/strong>：2 3 1 的排名 = 1×2! + 1×1! + 0 = 3（从 0 开始），是第四个排列。<\/p>\n<p><strong>还原<\/strong>：依次用 rank 除以 (n−1)!、(n−2)!…，商是「未用元素中的下标」。<\/p>\n<p><strong>边界<\/strong>：n ≤ 20 时 n! 还在 64 位范围内；再大就要用大整数。<\/p>\n<h2>常见误解<\/h2>\n<ul><li>\n别以为 next 要重排后缀：后缀递减，反转即可。\n<\/li><li>\n别以为排名从 1 开始：Knuth 的编号从 0 开始，差一位就会错开整个序列。\n<\/ul>\n<h2>在书中出现的脉络<\/h2>\n<table><thead><tr><th>章节<\/th><th>语境<\/th><th>关键结论<\/th><\/tr><\/thead><tbody><tr><td>7.2.1.2<\/td><td>生成排列<\/td><td>字典序 next 算法<\/td><\/tr><tr><td>7.2.1.2<\/td><td>排名<\/td><td>阶乘数系统<\/td><\/tr><\/tbody><\/table>\n<h2>相关概念<\/h2>\n<ul><li>\n前置：<a href=\"#\" target=\"_blank\" rel=\"noopener\">格雷码<\/a>\n<\/li><li>\n后续：<a href=\"#\" target=\"_blank\" rel=\"noopener\">相邻交换生成<\/a>\n<\/ul>", "kind": "concept", "title": "字典序与阶乘数系统"}, "c03": {"html": "<h1>相邻交换生成<\/h1>\n<ul><li>\n<strong>难度<\/strong>：进阶 | <strong>涉及章节<\/strong>：第 2 章\n<\/ul>\n<h2>一句话定义<\/h2>\n<p>相邻交换生成让每两个相邻排列只差一次元素交换；Heap 算法用恰好 n!−1 次交换走遍全部 n! 个排列。<\/p>\n<h2>为什么重要<\/h2>\n<p>它把「每个排列的生成代价」压到一次交换，且不需要额外空间。对需要逐状态处理、状态间差异要小的场景（如旅行商问题的局部搜索、排列编码的硬件测试）特别合适。<\/p>\n<h2>图示<\/h2>\n<div class=\"mermaid\" data-src=\"1\">flowchart TD\n    H[Heap n] --&gt; R1[递归生成前 n 减一 个]\n    R1 --&gt; P{交换哪两个}\n    P -- n 为奇数 --&gt; S1[第 1 与第 n 个]\n    P -- n 为偶数 --&gt; S2[第 i 与第 n 个]\n    S1 --&gt; R2[递归下一轮]\n    S2 --&gt; R2<\/div><p class=\"mermaid-hint\">↑ Mermaid 图示：联网时自动渲染为图表；离线时请阅读上方源码与正文说明。<\/p>\n<p>图中的判断是 Heap 算法唯一「反直觉」的地方：奇偶决定交换对象。<\/p>\n<h2>详解<\/h2>\n<p><strong>结构<\/strong>：n = 1 输出唯一排列；n &gt; 1 时循环 i，每次递归生成前 n−1 个的排列，然后按奇偶交换。<\/p>\n<p><strong>交换次数<\/strong>：n!−1。理由：每次交换都产生一个新排列，而新排列总数是 n!−1。<\/p>\n<p><strong>实例（n=3）<\/strong>：123、213（递归 n=2）；交换 1 与 3 得 321，递归得 321、231；再交换 1 与 3 得 132，递归得 132、312。共 6 个，5 次交换。<\/p>\n<p><strong>与字典序的差别<\/strong>：字典序的相邻排列可能差多个位置；Heap 的相邻排列只差一次交换。<\/p>\n<h2>常见误解<\/h2>\n<ul><li>\n别以为 Heap 算法需要额外数组：它原地交换，空间 O(n) 只是递归栈。\n<\/li><li>\n别以为交换次数越少运行越快：递归调用与输出本身也有代价。\n<\/ul>\n<h2>在书中出现的脉络<\/h2>\n<table><thead><tr><th>章节<\/th><th>语境<\/th><th>关键结论<\/th><\/tr><\/thead><tbody><tr><td>7.2.1.2<\/td><td>生成排列<\/td><td>相邻交换与 Heap 算法<\/td><\/tr><\/tbody><\/table>\n<h2>相关概念<\/h2>\n<ul><li>\n前置：<a href=\"#\" target=\"_blank\" rel=\"noopener\">字典序与阶乘数系统<\/a>\n<\/ul>", "kind": "concept", "title": "相邻交换生成"}, "__path__": {"html": "<h1>学习路径<\/h1><p>按推荐顺序学习；每步通过检查点（自测题）后再继续。<\/p><ol class='path-list'><li class='path-step' id='path-01'><strong>步骤 01：生成所有 n 元组<\/strong><br>阅读：<a href=\"#/chapter/ch01\">第 1 章：生成所有 n 元组<\/a><br>检查点：能手写 3 位格雷码，说明它相对二进制计数的优势<\/li><li class='path-step' id='path-02'><strong>步骤 02：生成所有排列<\/strong><br>阅读：<a href=\"#/chapter/ch02\">第 2 章：生成所有排列<\/a><br>检查点：能用 next 算法从 1 2 3 走到 3 2 1，能算一个排列的排名<\/li><\/ol><p>进度：<span id='path-progress-label'>0/0<\/span><\/p>", "kind": "path", "title": "学习路径"}, "__quiz_all__": {"html": "<div class='quiz-item' data-qid='q07' data-type='single'><p class='quiz-q'><b>Q7.<\/b> 综合题：要随机取 10 个元素全排列中的第 500000 个，最直接的做法是？<\/p><div class='quiz-opts'><label class='quiz-opt'><input type='radio' name='q07' value='0'> 用 next 算法走 500000 步<\/label><label class='quiz-opt'><input type='radio' name='q07' value='1'> 用阶乘数系统按排名直接还原<\/label><label class='quiz-opt'><input type='radio' name='q07' value='2'> 用 Heap 算法生成后取第 500000 个<\/label><label class='quiz-opt'><input type='radio' name='q07' value='3'> 随机洗牌直到命中<\/label><\/div><div class='quiz-actions'><button class='quiz-check'>检查答案<\/button><span class='quiz-feedback'><\/span><\/div><\/div>", "kind": "quiz", "title": "综合测验"}, "__quiz_ch01__": {"html": "<h1>测验：第 1 章：生成所有 n 元组<\/h1><div class='quiz-item' data-qid='q01' data-type='blank'><p class='quiz-q'><b>Q1.<\/b> 3 位二进制元组共有多少个？（填数字）<\/p><input class='quiz-blank' type='text' placeholder='填写答案'><div class='quiz-actions'><button class='quiz-check'>检查答案<\/button><span class='quiz-feedback'><\/span><\/div><\/div><div class='quiz-item' data-qid='q02' data-type='single'><p class='quiz-q'><b>Q2.<\/b> 3 位格雷码序列的第五个（从 0 数）编码是？<\/p><div class='quiz-opts'><label class='quiz-opt'><input type='radio' name='q02' value='0'> 010<\/label><label class='quiz-opt'><input type='radio' name='q02' value='1'> 110<\/label><label class='quiz-opt'><input type='radio' name='q02' value='2'> 111<\/label><label class='quiz-opt'><input type='radio' name='q02' value='3'> 100<\/label><\/div><div class='quiz-actions'><button class='quiz-check'>检查答案<\/button><span class='quiz-feedback'><\/span><\/div><\/div><div class='quiz-item' data-qid='q03' data-type='single'><p class='quiz-q'><b>Q3.<\/b> 格雷码相对普通二进制计数的主要优势是？<\/p><div class='quiz-opts'><label class='quiz-opt'><input type='radio' name='q03' value='0'> 数值更小<\/label><label class='quiz-opt'><input type='radio' name='q03' value='1'> 相邻只差一位<\/label><label class='quiz-opt'><input type='radio' name='q03' value='2'> 位数更少<\/label><label class='quiz-opt'><input type='radio' name='q03' value='3'> 可以排序<\/label><\/div><div class='quiz-actions'><button class='quiz-check'>检查答案<\/button><span class='quiz-feedback'><\/span><\/div><\/div><p class='quiz-summary'>完成作答后点击「检查答案」查看得分与解析。<\/p>", "kind": "quiz", "title": "测验"}, "__quiz_ch02__": {"html": "<h1>测验：第 2 章：生成所有排列<\/h1><div class='quiz-item' data-qid='q04' data-type='blank'><p class='quiz-q'><b>Q1.<\/b> 1 2 3 的字典序下一个排列是什么？（写成三个数字，不加空格）<\/p><input class='quiz-blank' type='text' placeholder='填写答案'><div class='quiz-actions'><button class='quiz-check'>检查答案<\/button><span class='quiz-feedback'><\/span><\/div><\/div><div class='quiz-item' data-qid='q05' data-type='single'><p class='quiz-q'><b>Q2.<\/b> 4 个元素的圆排列有多少种？<\/p><div class='quiz-opts'><label class='quiz-opt'><input type='radio' name='q05' value='0'> 4<\/label><label class='quiz-opt'><input type='radio' name='q05' value='1'> 6<\/label><label class='quiz-opt'><input type='radio' name='q05' value='2'> 12<\/label><label class='quiz-opt'><input type='radio' name='q05' value='3'> 24<\/label><\/div><div class='quiz-actions'><button class='quiz-check'>检查答案<\/button><span class='quiz-feedback'><\/span><\/div><\/div><div class='quiz-item' data-qid='q06' data-type='single'><p class='quiz-q'><b>Q3.<\/b> Heap 算法生成 n 个元素的全排列，共做多少次交换？<\/p><div class='quiz-opts'><label class='quiz-opt'><input type='radio' name='q06' value='0'> n<\/label><label class='quiz-opt'><input type='radio' name='q06' value='1'> n!−1<\/label><label class='quiz-opt'><input type='radio' name='q06' value='2'> n!<\/label><label class='quiz-opt'><input type='radio' name='q06' value='3'> n log n<\/label><\/div><div class='quiz-actions'><button class='quiz-check'>检查答案<\/button><span class='quiz-feedback'><\/span><\/div><\/div><p class='quiz-summary'>完成作答后点击「检查答案」查看得分与解析。<\/p>", "kind": "quiz", "title": "测验"}, "__cards__": {"html": "<h1>抽认卡<\/h1><p>点击卡片翻面；判断「认识 / 不熟」以记录复习状态。<\/p><div class='card-controls'><label>按章节筛选：<select id='card-filter'><option value=''>全部<\/option><\/select><\/label><span class='card-counts'>认识 <b id='card-known'>0<\/b> · 不熟 <b id='card-again'>0<\/b> · 剩余 <b id='card-left'>0<\/b><\/span><\/div><div id='card-stage'><div class='flashcard' id='flashcard'><div class='fc-inner'><div class='fc-front'><\/div><div class='fc-back'><\/div><\/div><\/div><\/div><div class='card-actions'><button id='card-again-btn'>不熟<\/button><button id='card-known-btn'>认识<\/button><\/div>", "kind": "cards", "title": "抽认卡"}, "__glossary__": {"html": "<h1>术语表<\/h1><input id='glossary-filter' type='search' placeholder='筛选术语…'><ul id='glossary-list'><li data-term='n 元组'>n 元组 — 由 n 个位置组成、每个位置取一个值的序列，各位置独立。 <span class=glossary-ref>（第 1 章：生成所有 n 元组）<\/span><\/li><li data-term='混合基'>混合基 — 每个位置有不同进制，例如小时与分钟。 <span class=glossary-ref>（第 1 章：生成所有 n 元组）<\/span><\/li><li data-term='格雷码'>格雷码 — 相邻两个编码只差一位的编码序列。 <span class=glossary-ref>（第 1 章：生成所有 n 元组）<\/span><\/li><li data-term='反射构造'>反射构造 — n 位格雷码由 n−1 位格雷码加 0 前缀与倒序加 1 前缀拼成。 <span class=glossary-ref>（第 1 章：生成所有 n 元组）<\/span><\/li><li data-term='字典序'>字典序 — 按第一个不同位置的元素大小决定先后。 <span class=glossary-ref>（第 2 章：生成所有排列）<\/span><\/li><li data-term='阶乘数系统'>阶乘数系统 — 第 i 位权为 i! 的进位制，用来给排列编号。 <span class=glossary-ref>（第 2 章：生成所有排列）<\/span><\/li><li data-term='排名'>排名 — 一个排列在字典序中的序号，从 0 开始。 <span class=glossary-ref>（第 2 章：生成所有排列）<\/span><\/li><li data-term='相邻交换'>相邻交换 — 每次只交换相邻两个元素的生成方式。 <span class=glossary-ref>（第 2 章：生成所有排列）<\/span><\/li><li data-term='heap 算法'>Heap 算法 — 用 n!−1 次相邻交换生成全部排列的递归算法。 <span class=glossary-ref>（第 2 章：生成所有排列）<\/span><\/li><li data-term='圆排列'>圆排列 — 把首尾视为相邻的排列，种数为 (n−1)!。 <span class=glossary-ref>（第 2 章：生成所有排列）<\/span><\/li><\/ul>", "kind": "glossary", "title": "术语表"}, "__patterns__": {"html": "<h1>模式与框架库<\/h1>\n<h2>框架：选一种生成方式<\/h2>\n<ol><li>\n<strong>只需要全部对象、不关心顺序<\/strong> → 二进制计数或递归，最简单。\n<\/li><li>\n<strong>相邻对象要尽量相似<\/strong> → 格雷码或相邻交换。\n<\/li><li>\n<strong>需要随机访问第 k 个对象<\/strong> → 阶乘数系统直接算排名与还原。\n<\/li><li>\n<strong>每位进制不同<\/strong> → 混合基计数。\n<\/ol>\n<h2>决策规则：判断「下一个」是否唯一<\/h2>\n<ul><li>\n字典序：下一个是「最右可增位加一、右侧重置为最小」。\n<\/li><li>\n格雷码：下一个是「翻转哪一位由当前步数的二进制决定」。\n<\/li><li>\n相邻交换：下一个是「按递归结构决定交换哪一对」。\n<\/ul>\n<h2>反模式<\/h2>\n<ul><li>\n<strong>用递归生成排列却不撤销交换<\/strong>：后续分支会基于错误状态。\n<\/li><li>\n<strong>格雷码与二进制码混用<\/strong>：转回普通二进制要异或前缀，忘了就全错。\n<\/li><li>\n<strong>用 n! 直接算排名<\/strong>：大 n 会溢出，要用阶乘数系统逐位算。\n<\/ul>", "kind": "模式库", "title": "模式库"}, "__cheatsheet__": {"html": "<h1>速查表<\/h1>\n<h2>n 元组<\/h2>\n<table><thead><tr><th>项目<\/th><th>内容<\/th><\/tr><\/thead><tbody><tr><td>总数<\/td><td>k^n（每位 k 种取值）<\/td><\/tr><tr><td>二进制计数<\/td><td>从 0 到 2^n−1<\/td><\/tr><tr><td>格雷码<\/td><td>g = b ⊕ (b &gt;&gt; 1)<\/td><\/tr><tr><td>逆转换<\/td><td>b = g ⊕ (g &gt;&gt; 1) ⊕ (g &gt;&gt; 2) …<\/td><\/tr><\/tbody><\/table>\n<h2>排列<\/h2>\n<table><thead><tr><th>项目<\/th><th>内容<\/th><\/tr><\/thead><tbody><tr><td>总数<\/td><td>n!<\/td><\/tr><tr><td>圆排列<\/td><td>(n−1)!<\/td><\/tr><tr><td>字典序下一个<\/td><td>找最右升序对、交换、反转右侧<\/td><\/tr><tr><td>排名<\/td><td>阶乘数系统逐位累加<\/td><\/tr><tr><td>Heap 算法交换次数<\/td><td>n! − 1<\/td><\/tr><\/tbody><\/table>\n<h2>3 位格雷码<\/h2>\n<p>000 → 001 → 011 → 010 → 110 → 111 → 101 → 100<\/p>", "kind": "速查表", "title": "速查表"}}, "base_dir": "/home/user/Doubao/chats/38451429127636482/TAOCP点化学习系统/05-生成元组与排列", "nav": [{"label": "学习路径", "href": "#/path"}, {"label": "章节", "children": [{"label": "第 1 章：生成所有 n 元组", "href": "#/chapter/ch01"}, {"label": "第 2 章：生成所有排列", "href": "#/chapter/ch02"}]}, {"label": "概念", "children": [{"label": "格雷码", "href": "#/concept/c01"}, {"label": "字典序与阶乘数系统", "href": "#/concept/c02"}, {"label": "相邻交换生成", "href": "#/concept/c03"}]}, {"label": "测验", "children": [{"label": "综合测验", "href": "#/quiz/all"}, {"label": "测验：第 1 章：生成所有 n 元组", "href": "#/quiz/ch01"}, {"label": "测验：第 2 章：生成所有排列", "href": "#/quiz/ch02"}]}, {"label": "抽认卡", "href": "#/cards"}, {"label": "术语表", "href": "#/glossary"}, {"label": "模式库", "href": "#/patterns"}, {"label": "速查表", "href": "#/cheatsheet"}], "rendered": {"ch01": "<h1>第 1 章：生成所有 n 元组<\/h1>\n<ul><li>\n<strong>难度<\/strong>：★★☆ | <strong>预估学时<\/strong>：4 小时 | <strong>前置<\/strong>：卷4A 第 4 章；二进制\n<\/ul>\n<h2>学习目标<\/h2>\n<p>学完本章，你能：<\/p>\n<ol><li>\n说出 k 进制 n 位元组的总数，并用「里程表」方式逐一生成。\n<\/li><li>\n用 g = b ⊕ (b&gt;&gt;1) 把普通二进制转成格雷码，并说明反向转换。\n<\/li><li>\n解释格雷码为什么让「生成下一个」的代价摊还到常数。\n<\/li><li>\n处理每一位进制不同的混合基计数。\n<\/ol>\n<h2>一句话核心<\/h2>\n<p>n 元组的生成本质就是<strong>计数器<\/strong>：每一位独立进位。全部技巧都围绕「怎样让每次进位只改一位」。<\/p>\n<h2>零基础讲解<\/h2>\n<h3>概念 1：元组与计数（难度：基础）<\/h3>\n<p>n 元组是 n 个位置各取一个值的序列。若每位有 k 种取值，总数是 k^n。<\/p>\n<p><strong>实例<\/strong>：3 位二进制元组，k=2、n=3，共 8 个：000、001、010、011、100、101、110、111。<\/p>\n<p><strong>里程表方式<\/strong>：把最低位加一，满 k 进位到高位。汽车里程表就是这么工作的。<\/p>\n<p><strong>代价<\/strong>：单次「加一」平均摊还 O(1)。因为最低位每步都变、次低位每两步变一次、第 i 位每 k^i 步变一次，总变化次数是 n + n/k + n/k² + … &lt; 2n。<\/p>\n<h3>概念 2：格雷码（难度：进阶）<\/h3>\n<p>二进制计数有时一次要改多位（011 → 100 改了三位）。格雷码要求相邻只差一位。<\/p>\n<p><strong>3 位格雷码<\/strong>：000、001、011、010、110、111、101、100。<\/p>\n<p><strong>转换公式<\/strong>：g = b ⊕ (b &gt;&gt; 1)。也就是格雷码的第 i 位 = 二进制第 i 位与第 i+1 位的异或。<\/p>\n<p><strong>实例<\/strong>：b = 6（110）。b&gt;&gt;1 = 011，异或得 101 = 5。序列里第 6 个（从 0 数）正是 101 ✓。<\/p>\n<p><strong>反向转换<\/strong>：b 的最高位等于 g 的最高位；之后 b 的第 i 位 = b 的第 i+1 位 ⊕ g 的第 i 位。写成循环就是不断「异或右移」。<\/p>\n<p><strong>为什么省<\/strong>：相邻格雷码只差一位，生成时只需翻转一个元素，O(1)；而且这一位是哪一位可以直接从步数算出来。<\/p>\n<h3>概念 3：反射构造（难度：进阶）<\/h3>\n<p>不用公式也能生成：n 位格雷码由两部分拼成——<\/p>\n<ol><li>\nn−1 位格雷码，前面加 0；\n<\/li><li>\nn−1 位格雷码<strong>倒序<\/strong>，前面加 1。\n<\/ol>\n<p><strong>实例<\/strong>：1 位是 0、1；2 位是 00、01、11、10；3 位是 000、001、011、010、110、111、101、100 ✓。<\/p>\n<p><strong>为什么倒序<\/strong>：正序末尾是 0 开头的最大的一个，倒序开头是 1 开头的最大的一个，两者只差最高位，衔接处也只改一位。<\/p>\n<h3>概念 4：混合基（难度：进阶）<\/h3>\n<p>每一位的进制不同，例如时间：时（24）、分（60）、秒（60）。总数是各位进制之积。<\/p>\n<p><strong>实例<\/strong>：两位、第一位 3 种取值、第二位 4 种取值，共 12 个元组。生成时低位满 4 进一，高位满 3 归零。<\/p>\n<p><strong>用途<\/strong>：多维数组的下标展开、密码表遍历、参数组合枚举。<\/p>\n<h2>图示<\/h2>\n<div class=\"mermaid\" data-src=\"1\">flowchart TD\n    S[当前元组] --&gt; L[最低位加一]\n    L --&gt; C{满 k 了吗}\n    C -- 否 --&gt; O[输出新元组]\n    C -- 是 --&gt; R[本位归零 进位到高位]\n    R --&gt; C\n    O --&gt; S<\/div><p class=\"mermaid-hint\">↑ Mermaid 图示：联网时自动渲染为图表；离线时请阅读上方源码与正文说明。<\/p>\n<p><strong>看图说明<\/strong>：进位可能连续发生，但摊还下来每次输出只改常数位。这就是「摊还 O(1)」的来源。<\/p>\n<h2>类比与实例<\/h2>\n<ul><li>\n类比：n 元组生成像里程表，低位转一圈高位进一格；格雷码像一种特制的表，每转一格只有一个数字变化。\n<\/li><li>\n类比失效：里程表的数字是十进制，格雷码的「一位变化」是二进制位；十进制下不存在「相邻只改一个数字」的完整循环（除了一部分特殊构造）。\n<\/ul>\n<p><strong>实例（格雷码生成）<\/strong>：从 0 数到 7，用 g = b⊕(b&gt;&gt;1) 得 0、1、3、2、6、7、5、4，写成三位二进制就是 000、001、011、010、110、111、101、100，相邻确实只差一位。<\/p>\n<h2>常见误解<\/h2>\n<ul><li>\n<strong>别以为格雷码是「另一种二进制数」<\/strong>——实际上它只是一个编码序列，同一个数值在格雷码下写法不同。\n<\/li><li>\n<strong>别以为二进制计数每次只改一位<\/strong>——实际上 011 到 100 改了三位，这正是格雷码要解决的问题。\n<\/li><li>\n<strong>别以为混合基很少用<\/strong>——实际上多维数组、日期时间、参数组合都是混合基。\n<\/ul>\n<h2>自测题（答案）<\/h2>\n<ol><li>\n填空题：3 位二进制元组共有多少个？（填数字）\n<p>（答案：8；解析：2^3 = 8，从 000 到 111。）<\/p>\n<\/ol>\n<ol><li>\n单选题：3 位格雷码序列的第五个（从 0 数）编码是？\n<p>A. 010 B. 110 C. 111 D. 100 （答案：B；解析：序列 000、001、011、010、110、111、101、100，第五个是 110。）<\/p>\n<\/ol>\n<ol><li>\n简答题：格雷码相对普通二进制计数，优势在哪？\n<p>（答案：相邻两个编码只差一位，生成下一个只需翻转一个元素，代价 O(1)，且硬件上不会出现多位同时跳变的毛刺。）<\/p>\n<\/ol>\n<h2>复习锚点<\/h2>\n<ul><li>\nk 进制 n 位元组共 k^n 个，按里程表进位。\n<\/li><li>\n格雷码 g = b⊕(b&gt;&gt;1)，相邻只差一位。\n<\/li><li>\n反射构造：0 前缀正序 + 1 前缀倒序。\n<\/ul>", "ch02": "<h1>第 2 章：生成所有排列<\/h1>\n<ul><li>\n<strong>难度<\/strong>：★★★ | <strong>预估学时<\/strong>：6 小时 | <strong>前置<\/strong>：第 1 章；阶乘\n<\/ul>\n<h2>学习目标<\/h2>\n<p>学完本章，你能：<\/p>\n<ol><li>\n用字典序的 next 算法从 1 2 3 一路走到 3 2 1。\n<\/li><li>\n用阶乘数系统给任意排列算排名，也能从排名还原排列。\n<\/li><li>\n说清 Heap 算法为什么只用 n!−1 次交换。\n<\/li><li>\n区分全排列、圆排列、带重复元素的排列。\n<\/ol>\n<h2>一句话核心<\/h2>\n<p>排列生成的两条主线是<strong>字典序<\/strong>（能排名、能随机访问）与<strong>相邻交换<\/strong>（每次改动最小）；两者的交点就是阶乘数系统。<\/p>\n<h2>零基础讲解<\/h2>\n<h3>概念 1：总数与字典序（难度：基础）<\/h3>\n<p>n 个不同元素有 n! 种排列。字典序按第一个不同位置的大小决定先后。<\/p>\n<p><strong>1 2 3 的六个排列<\/strong>：123、132、213、231、312、321。<\/p>\n<p><strong>next 算法<\/strong>（求字典序的下一个）：<\/p>\n<ol><li>\n从右往左找第一个「比右边小」的位置 i（即 a[i] &lt; a[i+1]）。\n<\/li><li>\n从右往左找第一个「比 a[i] 大」的位置 j。\n<\/li><li>\n交换 a[i] 与 a[j]。\n<\/li><li>\n把 i 右边的部分整体反转（原来递减，反转后递增）。\n<\/ol>\n<p><strong>实例<\/strong>：从 1 2 3 出发。<\/p>\n<ul><li>\ni = 2（2 &lt; 3），j = 3，交换得 1 3 2，右侧只有一个元素，反转不变 → 132 ✓。\n<\/li><li>\n从 1 3 2：i = 1（1 &lt; 3），j = 3（2 &gt; 1），交换得 2 3 1，反转右侧 3 1 得 1 3 → 231 ✓。\n<\/ul>\n<p><strong>为什么第 4 步是反转<\/strong>：i 右边原本是递减的（因为 i 是最右的升序对），反转后变成递增，正是字典序最小的后缀。<\/p>\n<h3>概念 2：阶乘数系统与排名（难度：进阶）<\/h3>\n<p>给排列编号，用「第 i 位有几个比它小的元素还在右边」作为该位的数字。<\/p>\n<p><strong>排名公式<\/strong>：rank = Σ c(i) × (n−i)!，其中 c(i) 是位置 i 右边比 a[i] 小的元素个数。<\/p>\n<p><strong>实例<\/strong>：排列 2 3 1。<\/p>\n<ul><li>\n位置 1 是 2，右边比它小的有 1，c=1，权 (3−1)! = 2 → 2\n<\/li><li>\n位置 2 是 3，右边比它小的有 1，c=1，权 (3−2)! = 1 → 1\n<\/li><li>\n位置 3 是 1，右边没有，c=0\n<\/li><li>\n排名 = 2 + 1 = 3（从 0 开始），即第 4 个，与 123、132、213、231 的顺序一致 ✓。\n<\/ul>\n<p><strong>反向<\/strong>：已知排名 r，从高位开始，第 i 位取「第 r / (n−i)! 个还没用过的元素」，余数继续。<\/p>\n<p><strong>为什么用阶乘数系统<\/strong>：它把「第几个排列」变成一个可计算的数，不需要从头数。n = 10 时 10! = 3,628,800，仍在整数范围内；n = 20 就超出 64 位。<\/p>\n<h3>概念 3：Heap 算法（难度：高难）<\/h3>\n<p>Heap 算法递归生成排列，只用相邻交换，总交换次数恰好 n!−1。<\/p>\n<p><strong>结构<\/strong>：<\/p>\n<ul><li>\nn = 1 时输出唯一排列。\n<\/li><li>\nn &gt; 1 时，对 i 从 1 到 n：先递归生成前 n−1 个元素的排列；若 n 为奇数，交换第 1 与第 n 个；若 n 为偶数，交换第 i 与第 n 个。\n<\/ul>\n<p><strong>为什么交换次数正好 n!−1<\/strong>：每输出一个新排列至少需要一次交换，而算法每次交换都产生一个新排列，所以交换次数等于「排列数减一」。<\/p>\n<p><strong>实例<\/strong>：n = 3。递归 n=2 输出 123、213；交换 1 与 3 得 321，递归输出 321、231；交换 1 与 3 得 132，递归输出 132、312。共 6 个，5 次交换 ✓。<\/p>\n<h3>概念 4：圆排列与重复元素（难度：进阶）<\/h3>\n<ul><li>\n<strong>圆排列<\/strong>：首尾相接，旋转视为同一种，种数为 (n−1)!。因为固定一个元素的位置后，其余 (n−1) 个随便排。\n<\/li><li>\n<strong>带重复元素<\/strong>：n 个元素中有重复组，种数为 n!/(n1!n2!…)。生成时要跳过重复分支，否则会输出重复排列。\n<\/ul>\n<p><strong>实例<\/strong>：A、A、B 的排列是 3!/2! = 3，即 AAB、ABA、BAA。<\/p>\n<h2>图示<\/h2>\n<div class=\"mermaid\" data-src=\"1\">flowchart TD\n    P[当前排列] --&gt; F[从右找第一个升序对 i]\n    F --&gt; G[从右找第一个大于 a i 的位置 j]\n    G --&gt; S[交换 i 与 j]\n    S --&gt; R[反转 i 右侧]\n    R --&gt; N[得到字典序下一个]\n    P --&gt; K[阶乘数系统]\n    K --&gt; ID[排名与还原]<\/div><p class=\"mermaid-hint\">↑ Mermaid 图示：联网时自动渲染为图表；离线时请阅读上方源码与正文说明。<\/p>\n<p><strong>看图说明<\/strong>：左侧是「一步一步走」，右侧是「直接跳到第 k 个」。两条路都可行，选哪条取决于你要遍历还是要随机访问。<\/p>\n<h2>类比与实例<\/h2>\n<ul><li>\n类比：字典序生成像翻字典，每次只改动尽量靠后的部分；阶乘数系统像给每个词编一个号码，不用翻就能直接跳到那一页。\n<\/li><li>\n类比失效：字典的编号是人为定的，排列的编号由阶乘权决定；n 一大，号码就超过整数范围。\n<\/ul>\n<p><strong>实例（还原排列）<\/strong>：n = 4，排名 5（从 0 开始），还原。<\/p>\n<ul><li>\n5 / 3! = 0 余 5，第 1 位取第 0 个未用元素 → 1\n<\/li><li>\n5 / 2! = 2 余 1，第 2 位取第 2 个未用元素（未用 2,3,4，第 2 个是 4）→ 4\n<\/li><li>\n1 / 1! = 1 余 0，第 3 位取第 1 个未用元素（未用 2,3，第 1 个是 3）→ 3\n<\/li><li>\n最后剩 2 → 2\n<p>排列为 1 4 3 2。核对：4 个元素排名 5，前五个是 1234、1243、1324、1342、1423，第六个是 1432 ✓。<\/p>\n<\/ul>\n<h2>常见误解<\/h2>\n<ul><li>\n<strong>别以为 next 算法要重新排序后缀<\/strong>——实际上后缀原本递减，只需反转，O(n) 而不是 O(n log n)。\n<\/li><li>\n<strong>别以为 Heap 算法交换次数多<\/strong>——实际上恰好 n!−1 次，已经是最少。\n<\/li><li>\n<strong>别以为圆排列就是「少一个元素」<\/strong>——实际上它是把旋转视为等价，除以 n，得 (n−1)!。\n<\/ul>\n<h2>自测题（答案）<\/h2>\n<ol><li>\n填空题：1 2 3 的字典序下一个排列是什么？（写成三个数字，不加空格）\n<p>（答案：132；解析：最右升序对是 2&lt;3，交换得 132，右侧单元素无需反转。）<\/p>\n<\/ol>\n<ol><li>\n单选题：4 个元素的圆排列有多少种？\n<p>A. 4 B. 6 C. 12 D. 24 （答案：B；解析：(4−1)! = 3! = 6，旋转视为同一种。）<\/p>\n<\/ol>\n<ol><li>\n简答题：Heap 算法生成 n 个元素的全排列，一共做多少次交换？\n<p>（答案：n!−1 次。每输出一个新排列至少一次交换，而算法每次交换都产生新排列，故交换次数等于排列数减一。）<\/p>\n<\/ol>\n<h2>复习锚点<\/h2>\n<ul><li>\n全排列 n!，圆排列 (n−1)!，带重复 n!/(n1!…)。\n<\/li><li>\nnext：找最右升序对、交换、反转后缀。\n<\/li><li>\n排名用阶乘数系统，n 一大就溢出。\n<\/ul>", "c01": "<h1>格雷码<\/h1>\n<ul><li>\n<strong>难度<\/strong>：基础 | <strong>涉及章节<\/strong>：第 1 章\n<\/ul>\n<h2>一句话定义<\/h2>\n<p>格雷码是一种二进制编码序列，任意相邻两个编码只差一位；把普通二进制 b 转成格雷码用 g = b ⊕ (b&gt;&gt;1)。<\/p>\n<h2>为什么重要<\/h2>\n<p>它把「计数器每次可能改多位」变成「每次只改一位」。这既省生成代价，也避免硬件多位同时跳变产生的毛刺；在旋转编码器、卡诺图、状态机编码里都能见到。<\/p>\n<h2>图示<\/h2>\n<div class=\"mermaid\" data-src=\"1\">flowchart LR\n    B0[0 000] --&gt; B1[1 001] --&gt; B2[3 011] --&gt; B3[2 010]\n    B3 --&gt; B4[6 110] --&gt; B5[7 111] --&gt; B6[5 101] --&gt; B7[4 100]<\/div><p class=\"mermaid-hint\">↑ Mermaid 图示：联网时自动渲染为图表；离线时请阅读上方源码与正文说明。<\/p>\n<p>看图：每一步只有一个位翻转，走完一圈回到起点也只差一位。<\/p>\n<h2>详解<\/h2>\n<p><strong>转换<\/strong>：g = b ⊕ (b &gt;&gt; 1)。 <strong>逆转换<\/strong>：从最高位开始，b 的最高位等于 g 的最高位；逐位往下，b(i) = b(i+1) ⊕ g(i)。<\/p>\n<p><strong>实例<\/strong>：b = 6（110），b&gt;&gt;1 = 011，g = 101（5）。<\/p>\n<p><strong>反射构造<\/strong>：n 位格雷码 = 0 前缀的 (n−1) 位格雷码 + 1 前缀的 (n−1) 位格雷码倒序。3 位得 000、001、011、010、110、111、101、100。<\/p>\n<p><strong>代价<\/strong>：生成下一个只需翻转一位，O(1)；总翻转次数约 2^n，摊还 O(1)。<\/p>\n<h2>常见误解<\/h2>\n<ul><li>\n别以为格雷码是「另一种数值」：它只是编码序列，数值不变，写法变了。\n<\/li><li>\n别以为任意长度都能「相邻只差一位且首尾也差一位」：循环格雷码需要额外的构造（如平衡格雷码）。\n<\/ul>\n<h2>在书中出现的脉络<\/h2>\n<table><thead><tr><th>章节<\/th><th>语境<\/th><th>关键结论<\/th><\/tr><\/thead><tbody><tr><td>7.2.1.1<\/td><td>生成 n 元组<\/td><td>二进制计数与格雷码<\/td><\/tr><tr><td>7.2.1.2<\/td><td>生成排列<\/td><td>相邻交换的思想来源<\/td><\/tr><\/tbody><\/table>\n<h2>相关概念<\/h2>\n<ul><li>\n后续：<a href=\"#\" target=\"_blank\" rel=\"noopener\">相邻交换生成<\/a>\n<\/ul>", "c02": "<h1>字典序与阶乘数系统<\/h1>\n<ul><li>\n<strong>难度<\/strong>：进阶 | <strong>涉及章节<\/strong>：第 2 章\n<\/ul>\n<h2>一句话定义<\/h2>\n<p>字典序按「第一个不同位置的大小」排序；阶乘数系统用「右边比它小的元素个数 × 阶乘权」给排列编号，使「第几个排列」可算。<\/p>\n<h2>为什么重要<\/h2>\n<p>它把「遍历所有排列」和「直接取第 k 个排列」统一起来：遍历用 next，随机访问用编号。密码学、组合测试、随机抽样都要用到。<\/p>\n<h2>图示<\/h2>\n<div class=\"mermaid\" data-src=\"1\">flowchart TD\n    P[排列 2 3 1] --&gt; C[逐位数右边比它小的]\n    C --&gt; D[1 和 1]\n    D --&gt; W[乘 2 的阶乘 与 1 的阶乘]\n    W --&gt; R[排名 3]\n    R --&gt; N[从排名还原排列]<\/div><p class=\"mermaid-hint\">↑ Mermaid 图示：联网时自动渲染为图表；离线时请阅读上方源码与正文说明。<\/p>\n<p>看这条链：排列 → 数字 → 排列，两个方向都可算。<\/p>\n<h2>详解<\/h2>\n<p><strong>next 四步<\/strong>：找最右升序对 i；找最右大于 a[i] 的 j；交换；反转 i 右侧。<\/p>\n<p><strong>排名公式<\/strong>：rank = Σ c(i)×(n−i)!，c(i) 是位置 i 右边比 a[i] 小的元素数。<\/p>\n<p><strong>实例<\/strong>：2 3 1 的排名 = 1×2! + 1×1! + 0 = 3（从 0 开始），是第四个排列。<\/p>\n<p><strong>还原<\/strong>：依次用 rank 除以 (n−1)!、(n−2)!…，商是「未用元素中的下标」。<\/p>\n<p><strong>边界<\/strong>：n ≤ 20 时 n! 还在 64 位范围内；再大就要用大整数。<\/p>\n<h2>常见误解<\/h2>\n<ul><li>\n别以为 next 要重排后缀：后缀递减，反转即可。\n<\/li><li>\n别以为排名从 1 开始：Knuth 的编号从 0 开始，差一位就会错开整个序列。\n<\/ul>\n<h2>在书中出现的脉络<\/h2>\n<table><thead><tr><th>章节<\/th><th>语境<\/th><th>关键结论<\/th><\/tr><\/thead><tbody><tr><td>7.2.1.2<\/td><td>生成排列<\/td><td>字典序 next 算法<\/td><\/tr><tr><td>7.2.1.2<\/td><td>排名<\/td><td>阶乘数系统<\/td><\/tr><\/tbody><\/table>\n<h2>相关概念<\/h2>\n<ul><li>\n前置：<a href=\"#\" target=\"_blank\" rel=\"noopener\">格雷码<\/a>\n<\/li><li>\n后续：<a href=\"#\" target=\"_blank\" rel=\"noopener\">相邻交换生成<\/a>\n<\/ul>", "c03": "<h1>相邻交换生成<\/h1>\n<ul><li>\n<strong>难度<\/strong>：进阶 | <strong>涉及章节<\/strong>：第 2 章\n<\/ul>\n<h2>一句话定义<\/h2>\n<p>相邻交换生成让每两个相邻排列只差一次元素交换；Heap 算法用恰好 n!−1 次交换走遍全部 n! 个排列。<\/p>\n<h2>为什么重要<\/h2>\n<p>它把「每个排列的生成代价」压到一次交换，且不需要额外空间。对需要逐状态处理、状态间差异要小的场景（如旅行商问题的局部搜索、排列编码的硬件测试）特别合适。<\/p>\n<h2>图示<\/h2>\n<div class=\"mermaid\" data-src=\"1\">flowchart TD\n    H[Heap n] --&gt; R1[递归生成前 n 减一 个]\n    R1 --&gt; P{交换哪两个}\n    P -- n 为奇数 --&gt; S1[第 1 与第 n 个]\n    P -- n 为偶数 --&gt; S2[第 i 与第 n 个]\n    S1 --&gt; R2[递归下一轮]\n    S2 --&gt; R2<\/div><p class=\"mermaid-hint\">↑ Mermaid 图示：联网时自动渲染为图表；离线时请阅读上方源码与正文说明。<\/p>\n<p>图中的判断是 Heap 算法唯一「反直觉」的地方：奇偶决定交换对象。<\/p>\n<h2>详解<\/h2>\n<p><strong>结构<\/strong>：n = 1 输出唯一排列；n &gt; 1 时循环 i，每次递归生成前 n−1 个的排列，然后按奇偶交换。<\/p>\n<p><strong>交换次数<\/strong>：n!−1。理由：每次交换都产生一个新排列，而新排列总数是 n!−1。<\/p>\n<p><strong>实例（n=3）<\/strong>：123、213（递归 n=2）；交换 1 与 3 得 321，递归得 321、231；再交换 1 与 3 得 132，递归得 132、312。共 6 个，5 次交换。<\/p>\n<p><strong>与字典序的差别<\/strong>：字典序的相邻排列可能差多个位置；Heap 的相邻排列只差一次交换。<\/p>\n<h2>常见误解<\/h2>\n<ul><li>\n别以为 Heap 算法需要额外数组：它原地交换，空间 O(n) 只是递归栈。\n<\/li><li>\n别以为交换次数越少运行越快：递归调用与输出本身也有代价。\n<\/ul>\n<h2>在书中出现的脉络<\/h2>\n<table><thead><tr><th>章节<\/th><th>语境<\/th><th>关键结论<\/th><\/tr><\/thead><tbody><tr><td>7.2.1.2<\/td><td>生成排列<\/td><td>相邻交换与 Heap 算法<\/td><\/tr><\/tbody><\/table>\n<h2>相关概念<\/h2>\n<ul><li>\n前置：<a href=\"#\" target=\"_blank\" rel=\"noopener\">字典序与阶乘数系统<\/a>\n<\/ul>", "__path__": "<h1>学习路径<\/h1><p>按推荐顺序学习；每步通过检查点（自测题）后再继续。<\/p><ol class='path-list'><li class='path-step' id='path-01'><strong>步骤 01：生成所有 n 元组<\/strong><br>阅读：<a href=\"#/chapter/ch01\">第 1 章：生成所有 n 元组<\/a><br>检查点：能手写 3 位格雷码，说明它相对二进制计数的优势<\/li><li class='path-step' id='path-02'><strong>步骤 02：生成所有排列<\/strong><br>阅读：<a href=\"#/chapter/ch02\">第 2 章：生成所有排列<\/a><br>检查点：能用 next 算法从 1 2 3 走到 3 2 1，能算一个排列的排名<\/li><\/ol><p>进度：<span id='path-progress-label'>0/0<\/span><\/p>", "__quiz_all__": "<div class='quiz-item' data-qid='q07' data-type='single'><p class='quiz-q'><b>Q7.<\/b> 综合题：要随机取 10 个元素全排列中的第 500000 个，最直接的做法是？<\/p><div class='quiz-opts'><label class='quiz-opt'><input type='radio' name='q07' value='0'> 用 next 算法走 500000 步<\/label><label class='quiz-opt'><input type='radio' name='q07' value='1'> 用阶乘数系统按排名直接还原<\/label><label class='quiz-opt'><input type='radio' name='q07' value='2'> 用 Heap 算法生成后取第 500000 个<\/label><label class='quiz-opt'><input type='radio' name='q07' value='3'> 随机洗牌直到命中<\/label><\/div><div class='quiz-actions'><button class='quiz-check'>检查答案<\/button><span class='quiz-feedback'><\/span><\/div><\/div>", "__quiz_ch01__": "<h1>测验：第 1 章：生成所有 n 元组<\/h1><div class='quiz-item' data-qid='q01' data-type='blank'><p class='quiz-q'><b>Q1.<\/b> 3 位二进制元组共有多少个？（填数字）<\/p><input class='quiz-blank' type='text' placeholder='填写答案'><div class='quiz-actions'><button class='quiz-check'>检查答案<\/button><span class='quiz-feedback'><\/span><\/div><\/div><div class='quiz-item' data-qid='q02' data-type='single'><p class='quiz-q'><b>Q2.<\/b> 3 位格雷码序列的第五个（从 0 数）编码是？<\/p><div class='quiz-opts'><label class='quiz-opt'><input type='radio' name='q02' value='0'> 010<\/label><label class='quiz-opt'><input type='radio' name='q02' value='1'> 110<\/label><label class='quiz-opt'><input type='radio' name='q02' value='2'> 111<\/label><label class='quiz-opt'><input type='radio' name='q02' value='3'> 100<\/label><\/div><div class='quiz-actions'><button class='quiz-check'>检查答案<\/button><span class='quiz-feedback'><\/span><\/div><\/div><div class='quiz-item' data-qid='q03' data-type='single'><p class='quiz-q'><b>Q3.<\/b> 格雷码相对普通二进制计数的主要优势是？<\/p><div class='quiz-opts'><label class='quiz-opt'><input type='radio' name='q03' value='0'> 数值更小<\/label><label class='quiz-opt'><input type='radio' name='q03' value='1'> 相邻只差一位<\/label><label class='quiz-opt'><input type='radio' name='q03' value='2'> 位数更少<\/label><label class='quiz-opt'><input type='radio' name='q03' value='3'> 可以排序<\/label><\/div><div class='quiz-actions'><button class='quiz-check'>检查答案<\/button><span class='quiz-feedback'><\/span><\/div><\/div><p class='quiz-summary'>完成作答后点击「检查答案」查看得分与解析。<\/p>", "__quiz_ch02__": "<h1>测验：第 2 章：生成所有排列<\/h1><div class='quiz-item' data-qid='q04' data-type='blank'><p class='quiz-q'><b>Q1.<\/b> 1 2 3 的字典序下一个排列是什么？（写成三个数字，不加空格）<\/p><input class='quiz-blank' type='text' placeholder='填写答案'><div class='quiz-actions'><button class='quiz-check'>检查答案<\/button><span class='quiz-feedback'><\/span><\/div><\/div><div class='quiz-item' data-qid='q05' data-type='single'><p class='quiz-q'><b>Q2.<\/b> 4 个元素的圆排列有多少种？<\/p><div class='quiz-opts'><label class='quiz-opt'><input type='radio' name='q05' value='0'> 4<\/label><label class='quiz-opt'><input type='radio' name='q05' value='1'> 6<\/label><label class='quiz-opt'><input type='radio' name='q05' value='2'> 12<\/label><label class='quiz-opt'><input type='radio' name='q05' value='3'> 24<\/label><\/div><div class='quiz-actions'><button class='quiz-check'>检查答案<\/button><span class='quiz-feedback'><\/span><\/div><\/div><div class='quiz-item' data-qid='q06' data-type='single'><p class='quiz-q'><b>Q3.<\/b> Heap 算法生成 n 个元素的全排列，共做多少次交换？<\/p><div class='quiz-opts'><label class='quiz-opt'><input type='radio' name='q06' value='0'> n<\/label><label class='quiz-opt'><input type='radio' name='q06' value='1'> n!−1<\/label><label class='quiz-opt'><input type='radio' name='q06' value='2'> n!<\/label><label class='quiz-opt'><input type='radio' name='q06' value='3'> n log n<\/label><\/div><div class='quiz-actions'><button class='quiz-check'>检查答案<\/button><span class='quiz-feedback'><\/span><\/div><\/div><p class='quiz-summary'>完成作答后点击「检查答案」查看得分与解析。<\/p>", "__cards__": "<h1>抽认卡<\/h1><p>点击卡片翻面；判断「认识 / 不熟」以记录复习状态。<\/p><div class='card-controls'><label>按章节筛选：<select id='card-filter'><option value=''>全部<\/option><\/select><\/label><span class='card-counts'>认识 <b id='card-known'>0<\/b> · 不熟 <b id='card-again'>0<\/b> · 剩余 <b id='card-left'>0<\/b><\/span><\/div><div id='card-stage'><div class='flashcard' id='flashcard'><div class='fc-inner'><div class='fc-front'><\/div><div class='fc-back'><\/div><\/div><\/div><\/div><div class='card-actions'><button id='card-again-btn'>不熟<\/button><button id='card-known-btn'>认识<\/button><\/div>", "__glossary__": "<h1>术语表<\/h1><input id='glossary-filter' type='search' placeholder='筛选术语…'><ul id='glossary-list'><li data-term='n 元组'>n 元组 — 由 n 个位置组成、每个位置取一个值的序列，各位置独立。 <span class=glossary-ref>（第 1 章：生成所有 n 元组）<\/span><\/li><li data-term='混合基'>混合基 — 每个位置有不同进制，例如小时与分钟。 <span class=glossary-ref>（第 1 章：生成所有 n 元组）<\/span><\/li><li data-term='格雷码'>格雷码 — 相邻两个编码只差一位的编码序列。 <span class=glossary-ref>（第 1 章：生成所有 n 元组）<\/span><\/li><li data-term='反射构造'>反射构造 — n 位格雷码由 n−1 位格雷码加 0 前缀与倒序加 1 前缀拼成。 <span class=glossary-ref>（第 1 章：生成所有 n 元组）<\/span><\/li><li data-term='字典序'>字典序 — 按第一个不同位置的元素大小决定先后。 <span class=glossary-ref>（第 2 章：生成所有排列）<\/span><\/li><li data-term='阶乘数系统'>阶乘数系统 — 第 i 位权为 i! 的进位制，用来给排列编号。 <span class=glossary-ref>（第 2 章：生成所有排列）<\/span><\/li><li data-term='排名'>排名 — 一个排列在字典序中的序号，从 0 开始。 <span class=glossary-ref>（第 2 章：生成所有排列）<\/span><\/li><li data-term='相邻交换'>相邻交换 — 每次只交换相邻两个元素的生成方式。 <span class=glossary-ref>（第 2 章：生成所有排列）<\/span><\/li><li data-term='heap 算法'>Heap 算法 — 用 n!−1 次相邻交换生成全部排列的递归算法。 <span class=glossary-ref>（第 2 章：生成所有排列）<\/span><\/li><li data-term='圆排列'>圆排列 — 把首尾视为相邻的排列，种数为 (n−1)!。 <span class=glossary-ref>（第 2 章：生成所有排列）<\/span><\/li><\/ul>", "__patterns__": "<h1>模式与框架库<\/h1>\n<h2>框架：选一种生成方式<\/h2>\n<ol><li>\n<strong>只需要全部对象、不关心顺序<\/strong> → 二进制计数或递归，最简单。\n<\/li><li>\n<strong>相邻对象要尽量相似<\/strong> → 格雷码或相邻交换。\n<\/li><li>\n<strong>需要随机访问第 k 个对象<\/strong> → 阶乘数系统直接算排名与还原。\n<\/li><li>\n<strong>每位进制不同<\/strong> → 混合基计数。\n<\/ol>\n<h2>决策规则：判断「下一个」是否唯一<\/h2>\n<ul><li>\n字典序：下一个是「最右可增位加一、右侧重置为最小」。\n<\/li><li>\n格雷码：下一个是「翻转哪一位由当前步数的二进制决定」。\n<\/li><li>\n相邻交换：下一个是「按递归结构决定交换哪一对」。\n<\/ul>\n<h2>反模式<\/h2>\n<ul><li>\n<strong>用递归生成排列却不撤销交换<\/strong>：后续分支会基于错误状态。\n<\/li><li>\n<strong>格雷码与二进制码混用<\/strong>：转回普通二进制要异或前缀，忘了就全错。\n<\/li><li>\n<strong>用 n! 直接算排名<\/strong>：大 n 会溢出，要用阶乘数系统逐位算。\n<\/ul>", "__cheatsheet__": "<h1>速查表<\/h1>\n<h2>n 元组<\/h2>\n<table><thead><tr><th>项目<\/th><th>内容<\/th><\/tr><\/thead><tbody><tr><td>总数<\/td><td>k^n（每位 k 种取值）<\/td><\/tr><tr><td>二进制计数<\/td><td>从 0 到 2^n−1<\/td><\/tr><tr><td>格雷码<\/td><td>g = b ⊕ (b &gt;&gt; 1)<\/td><\/tr><tr><td>逆转换<\/td><td>b = g ⊕ (g &gt;&gt; 1) ⊕ (g &gt;&gt; 2) …<\/td><\/tr><\/tbody><\/table>\n<h2>排列<\/h2>\n<table><thead><tr><th>项目<\/th><th>内容<\/th><\/tr><\/thead><tbody><tr><td>总数<\/td><td>n!<\/td><\/tr><tr><td>圆排列<\/td><td>(n−1)!<\/td><\/tr><tr><td>字典序下一个<\/td><td>找最右升序对、交换、反转右侧<\/td><\/tr><tr><td>排名<\/td><td>阶乘数系统逐位累加<\/td><\/tr><tr><td>Heap 算法交换次数<\/td><td>n! − 1<\/td><\/tr><\/tbody><\/table>\n<h2>3 位格雷码<\/h2>\n<p>000 → 001 → 011 → 010 → 110 → 111 → 101 → 100<\/p>"}};
+const pages = DATA.rendered;
+const manifest = DATA.manifest;
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const SLUG = manifest.slug || 'book';
+const store = {
+  get(k){ try{ return JSON.parse(localStorage.getItem(SLUG+':'+k)||'null') }catch(e){ return null } },
+  set(k,v){ try{ localStorage.setItem(SLUG+':'+k, JSON.stringify(v)) }catch(e){} }
+};
+let state = { visited: store.get('visited')||[], quiz: store.get('quiz')||{}, cards: store.get('cards')||{} };
+
+/* ---------- 导航 ---------- */
+function renderNav(){
+  const nav = $('#nav'); nav.innerHTML='';
+  const build = items => items.forEach(it=>{
+    if(it.children){
+      const sec=document.createElement('div'); sec.className='nav-sec'; sec.textContent=it.label; nav.appendChild(sec);
+      it.children.forEach(c=>{
+        const a=document.createElement('a'); a.className='nav-item'; a.href=c.href; a.textContent=c.label;
+        const id=routeId(c.href);
+        if(state.visited.includes(id)) a.innerHTML = esc(c.label)+' <span class="done">✓</span>';
+        nav.appendChild(a);
+      });
+    }else{
+      const a=document.createElement('a'); a.className='nav-item'; a.href=it.href; a.textContent=it.label;
+      const id=routeId(it.href);
+      if(state.visited.includes(id)) a.innerHTML = esc(it.label)+' <span class="done">✓</span>';
+      nav.appendChild(a);
+    }
+  });
+  build(DATA.nav);
+  updateProgress();
+}
+function routeId(href){ return href.replace('#/',''); }
+
+/* ---------- 路由 ---------- */
+function routeIdFromHash(){
+  let h = location.hash.replace(/^#\//,'');
+  if(!h) return 'path';
+  if(h==='path') return 'path';
+  const m = h.match(/^(chapter|concept)\/(.+)$/);
+  if(m) return m[1]+'/'+m[2];
+  return h; // quiz/all, quiz/ch01, cards, glossary, patterns, cheatsheet
+}
+function showPage(rid){
+  const id = rid==='path' ? '__path__' : rid.startsWith('quiz/') ? '__quiz_'+rid.split('/')[1]+'__' : rid==='cards'?'__cards__':rid==='glossary'?'__glossary__':rid==='patterns'?'__patterns__':rid==='cheatsheet'?'__cheatsheet__':rid.startsWith('chapter/')?rid.split('/')[1]:rid.startsWith('concept/')?rid.split('/')[1]:rid;
+  const html = pages[id] || '<div class="empty">页面不存在</div>';
+  $('#view').innerHTML = html;
+  document.querySelectorAll('.nav-item').forEach(a=>a.classList.toggle('active', routeId(a.getAttribute('href'))===rid));
+  if(!state.visited.includes(rid) && (rid.startsWith('chapter/')||rid.startsWith('concept/'))){
+    state.visited.push(rid); store.set('visited', state.visited); renderNav();
+  }
+  window.scrollTo(0,0);
+  if(rid==='cards') initCards();
+  if(rid==='glossary') initGlossary();
+  if(rid.startsWith('quiz')) initQuizzes(rid);
+  if(id==='__path__') updatePath();
+  renderMermaid();
+}
+
+/* ---------- 进度 ---------- */
+function updateProgress(){
+  const chs = (manifest.chapters||[]).length;
+  const done = (manifest.chapters||[]).filter(c=>state.visited.includes('chapter/'+c.id)).length;
+  const pct = chs? Math.round(done/chs*100) : 0;
+  $('#progress-fill').style.width = pct+'%';
+  $('#progress-label').textContent = `进度 ${pct}% · 已学 ${done}/${chs} 章`;
+}
+function updatePath(){
+  document.querySelectorAll('.path-step').forEach(el=>{
+    const step = el.id.replace('path-','');
+    const s = (manifest.learningPath||[]).find(x=>x.step===step);
+    if(s && (s.chapterIds||[]).every(c=>state.visited.includes('chapter/'+c))){
+      el.classList.add('passed');
+      const lbl = el.querySelector('.checkpoint-ok'); if(!lbl){ const sp=document.createElement('span'); sp.className='done'; sp.textContent=' ✓ 已完成'; el.appendChild(sp); }
+    }
+  });
+}
+
+/* ---------- 测验 ---------- */
+function initQuizzes(rid){
+  document.querySelectorAll('.quiz-item').forEach(item=>{
+    const btn = item.querySelector('.quiz-check');
+    if(!btn || item.dataset.inited){ return }
+    item.dataset.inited='1';
+    btn.addEventListener('click', ()=>{
+      const qid = item.dataset.qid; const type = item.dataset.type;
+      const q = (manifest.quizzes||[]).find(x=>x.id===qid); if(!q) return;
+      let user, correct=false, fb;
+      if(type==='single'){
+        const sel = item.querySelector('input:checked');
+        user = sel? parseInt(sel.value) : null;
+        correct = user===q.answer;
+        fb = correct?'✓ 正确':'✗ 错误'+(user==null?'（未作答）':'');
+      } else if(type==='multi'){
+        user = Array.from(item.querySelectorAll('input:checked')).map(i=>parseInt(i.value)).sort();
+        const ans = Array.isArray(q.answer)? q.answer.slice().sort(): [q.answer];
+        correct = user.length>0 && JSON.stringify(user)===JSON.stringify(ans);
+        fb = correct?'✓ 正确':'✗ 错误';
+      } else if(type==='blank'){
+        const v = (item.querySelector('.quiz-blank').value||'').trim().toLowerCase();
+        const a = String(q.answer).trim().toLowerCase();
+        correct = v===a;
+        fb = correct?'✓ 正确':'✗ 错误'+(v?'':'（未作答）');
+      }
+      item.querySelectorAll('input:checked').forEach(i=>{
+        const val=parseInt(i.value);
+        if(Array.isArray(q.answer)? q.answer.includes(val) : val===q.answer) i.parentElement.style.color='var(--ok)';
+        else i.parentElement.style.color='var(--bad)';
+      });
+      const feed = item.querySelector('.quiz-feedback');
+      feed.className = 'quiz-feedback '+(correct?'fb-ok':'fb-bad');
+      feed.textContent = fb;
+      let ex = item.querySelector('.quiz-explain');
+      if(!ex){ ex=document.createElement('div'); ex.className='quiz-explain'; item.appendChild(ex); }
+      ex.innerHTML = '解析：' + esc(q.explain||'');
+      // 记录成绩（按章聚合）
+      const ch = q.chapterId||'__all__';
+      if(!state.quiz[ch]) state.quiz[ch]={done:0,total:0};
+      state.quiz[ch].done = Math.min(state.quiz[ch].total+1, state.quiz[ch].done+1);
+      state.quiz[ch].total += 1;
+      store.set('quiz', state.quiz);
+    });
+  });
+}
+
+/* ---------- 抽认卡 ---------- */
+let cardIdx = 0, cardList = [];
+function initCards(){
+  const cards = manifest.flashcards||[];
+  cardList = cards.slice();
+  cardIdx = 0;
+  const sel = $('#card-filter');
+  sel.innerHTML = '<option value="">全部</option>';
+  [...new Set(cards.map(c=>c.chapterId).filter(Boolean))].forEach(c=>{
+    const o=document.createElement('option'); o.value=c; o.textContent=manifestChTitle(c); sel.appendChild(o);
+  });
+  sel.onchange = ()=>{ const v=sel.value; cardList = v? cards.filter(c=>c.chapterId===v): cards.slice(); cardIdx=0; showCard(); };
+  $('#flashcard').onclick = ()=>$('#flashcard').classList.toggle('flip');
+  $('#card-known-btn').onclick = ()=>{ markCard(true); };
+  $('#card-again-btn').onclick = ()=>{ markCard(false); };
+  showCard();
+}
+function showCard(){
+  updateCardCounts();
+  if(cardIdx>=cardList.length){ $('#card-stage').innerHTML='<div class="empty">本组卡片已全部复习完 🎉</div>'; return; }
+  const c = cardList[cardIdx];
+  document.querySelector('.fc-front').textContent = c.front;
+  document.querySelector('.fc-back').textContent = c.back;
+  $('#flashcard').classList.remove('flip');
+}
+function markCard(known){
+  const c = cardList[cardIdx]; if(!c) return;
+  state.cards[c.id] = known?'known':'again';
+  store.set('cards', state.cards);
+  cardIdx++; showCard();
+}
+function updateCardCounts(){
+  const known = Object.values(state.cards).filter(v=>v==='known').length;
+  const again = Object.values(state.cards).filter(v=>v==='again').length;
+  $('#card-known').textContent = known;
+  $('#card-again').textContent = again;
+  $('#card-left').textContent = Math.max(0, cardList.length-cardIdx);
+}
+function manifestChTitle(id){
+  const c=(manifest.chapters||[]).find(x=>x.id===id); return c? c.title : id;
+}
+
+/* ---------- 术语表 ---------- */
+function initGlossary(){
+  const input = $('#glossary-filter');
+  if(!input || input.dataset.inited) return;
+  input.dataset.inited='1';
+  input.oninput = ()=>{
+    const v = input.value.trim().toLowerCase();
+    document.querySelectorAll('#glossary-list li').forEach(li=>{
+      li.style.display = (!v || li.dataset.term.includes(v)) ? '' : 'none';
+    });
+  };
+}
+
+/* ---------- 搜索 ---------- */
+let searchIndex = null;
+function buildSearchIndex(){
+  if(searchIndex) return searchIndex;
+  searchIndex = [];
+  Object.entries(pages).forEach(([id, htmlText])=>{
+    if(id.startsWith('__')) return;
+    const text = htmlText.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ');
+    searchIndex.push({id, text});
+  });
+  return searchIndex;
+}
+$('#q').addEventListener('input', e=>{
+  const v = e.target.value.trim().toLowerCase();
+  if(!v){ showPage(routeIdFromHash()); return; }
+  buildSearchIndex();
+  const hits = searchIndex.filter(p=>p.text.toLowerCase().includes(v)).slice(0,20);
+  const label = id => id.startsWith('chapter/')? ('章节：'+manifestChTitle(id.split('/')[1])) : id.startsWith('concept/')? ('概念：'+id.split('/')[1]) : id;
+  $('#view').innerHTML = '<h1>搜索结果：'+esc(v)+'</h1>' +
+    (hits.length? hits.map(h=>`<div class="search-hit"><a href="#/${h.id}">${esc(label(h.id))}</a><br><span class="sub">${esc(h.text.slice(0,180))}</span></div>`).join('')
+                 : '<div class="empty">未找到相关页面，试试章节名/概念名/术语。</div>');
+});
+
+/* ---------- Mermaid 懒加载（联网渲染，离线显示源码） ---------- */
+function renderMermaid(){
+  if(!document.querySelector('.mermaid')) return;
+  const s=document.createElement('script');
+  s.src='https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
+  s.onload=()=>{ try{
+    mermaid.initialize({startOnLoad:false, theme: matchMedia('(prefers-color-scheme: dark)').matches?'dark':'default'});
+    document.querySelectorAll('.mermaid').forEach(el=>{
+      const code=el.textContent;
+      mermaid.render('mm'+Math.random().toString(36).slice(2), code)
+        .then(({svg})=>{ el.innerHTML=svg; })
+        .catch(()=>{ el.textContent=code; });
+    });
+  }catch(e){} };
+  document.head.appendChild(s);
+}
+
+/* ---------- 深色模式 ---------- */
+const themeBtn=$('#theme-btn');
+themeBtn.onclick=()=>{
+  const d = document.body.dataset.theme==='dark';
+  document.body.dataset.theme = d? '' : 'dark';
+  themeBtn.textContent = d? '🌙 深色' : '☀️ 浅色';
+};
+
+/* ---------- 启动 ---------- */
+renderNav();
+window.addEventListener('hashchange', ()=>showPage(routeIdFromHash()));
+(function(){
+  const sb=document.querySelector('.sidebar'); if(!sb) return;
+  const btn=document.createElement('button'); btn.id='nav-toggle'; btn.textContent='目录（点开选择章节）';
+  btn.onclick=()=>sb.classList.toggle('open');
+  sb.insertBefore(btn, sb.querySelector('#nav'));
+  window.addEventListener('hashchange',()=>{ if(window.innerWidth<=760) sb.classList.remove('open'); });
+})();
+showPage(routeIdFromHash());
+</script>
+</body>
+</html>

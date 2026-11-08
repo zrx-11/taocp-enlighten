@@ -1,0 +1,342 @@
+{
+  "slug": "mmix",
+  "title": "计算机程序设计艺术 MMIX 增补",
+  "subtitle": "用一台 64 位机器，把前几卷的算法真正跑起来",
+  "book": {
+    "title": "计算机程序设计艺术 MMIX 增补",
+    "author": "Donald E. Knuth（高德纳）著",
+    "source": [
+      "计算机程序设计艺术 MMIX增补.pdf（扫描版 319 页）"
+    ]
+  },
+  "audience": "读完卷1 至卷3、想看懂 Knuth 的机器级实现",
+  "goal": "系统掌握：能读懂 MMIX 指令与汇编、能解释子程序与协同程序的机器级实现、能把卷1–3 的算法对应到 MMIX 版本。",
+  "companion": "mmix学习伴侣.html",
+  "learningPath": [
+    {
+      "step": "01",
+      "title": "MMIX 的寄存器与指令",
+      "chapterIds": [
+        "ch01"
+      ],
+      "checkpoint": "能解释三地址指令各字段，能写出一次加载加一次加法"
+    },
+    {
+      "step": "02",
+      "title": "汇编、子程序与协同程序",
+      "chapterIds": [
+        "ch02"
+      ],
+      "checkpoint": "能说清 pushj/pop 如何保存返回地址，能解释协同程序与子程序的区别"
+    },
+    {
+      "step": "03",
+      "title": "卷1 至卷3 的 MMIX 重写",
+      "chapterIds": [
+        "ch03"
+      ],
+      "checkpoint": "能说出链接分配、随机数、排序在 MMIX 上各多了哪些机器级操作"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "ch01",
+      "title": "第 1 章：MMIX 的寄存器、内存与指令",
+      "file": "chapters/ch01-MMIX架构.md",
+      "difficulty": 2
+    },
+    {
+      "id": "ch02",
+      "title": "第 2 章：汇编、子程序与协同程序",
+      "file": "chapters/ch02-汇编与子程序.md",
+      "difficulty": 3
+    },
+    {
+      "id": "ch03",
+      "title": "第 3 章：卷1 至卷3 的 MMIX 重写",
+      "file": "chapters/ch03-经典算法的MMIX重写.md",
+      "difficulty": 3
+    }
+  ],
+  "concepts": [
+    {
+      "id": "c01",
+      "title": "MMIX 指令格式",
+      "file": "concepts/mmix-instruction-format.md",
+      "chapterIds": [
+        "ch01"
+      ]
+    },
+    {
+      "id": "c02",
+      "title": "子程序与栈帧",
+      "file": "concepts/subroutine-stack-frame.md",
+      "chapterIds": [
+        "ch02"
+      ]
+    },
+    {
+      "id": "c03",
+      "title": "协同程序",
+      "file": "concepts/coroutine.md",
+      "chapterIds": [
+        "ch02"
+      ]
+    }
+  ],
+  "glossary": [
+    {
+      "term": "通用寄存器",
+      "def": "MMIX 的 256 个 64 位寄存器，编号 0 到 255，其中 0 号恒为 0。",
+      "chapterId": "ch01"
+    },
+    {
+      "term": "三地址指令",
+      "def": "一条指令同时指定两个源操作数和一个目的寄存器。",
+      "chapterId": "ch01"
+    },
+    {
+      "term": "加载与存储",
+      "def": "在内存与寄存器之间搬运数据的指令。",
+      "chapterId": "ch01"
+    },
+    {
+      "term": "分支",
+      "def": "根据比较结果跳转到另一个地址。",
+      "chapterId": "ch01"
+    },
+    {
+      "term": "汇编语言",
+      "def": "用助记符写指令、由汇编器翻译成机器码的语言。",
+      "chapterId": "ch02"
+    },
+    {
+      "term": "栈帧",
+      "def": "一次子程序调用在栈上占用的区域，存返回地址与局部变量。",
+      "chapterId": "ch02"
+    },
+    {
+      "term": "pushj",
+      "def": "MMIX 的跳转并保存返回地址指令。",
+      "chapterId": "ch02"
+    },
+    {
+      "term": "协同程序",
+      "def": "可以互相暂停与恢复、交替执行的两段代码。",
+      "chapterId": "ch02"
+    },
+    {
+      "term": "解释程序",
+      "def": "逐条读取指令并模拟其行为的程序。",
+      "chapterId": "ch02"
+    },
+    {
+      "term": "链接分配",
+      "def": "用指针把分散的内存块串成表。",
+      "chapterId": "ch03"
+    },
+    {
+      "term": "替代选择",
+      "def": "外部排序中用堆边写边读、加长游程的方法。",
+      "chapterId": "ch03"
+    }
+  ],
+  "patterns": {
+    "file": "patterns.md"
+  },
+  "cheatsheet": {
+    "file": "cheatsheet.md"
+  },
+  "quizzes": [
+    {
+      "id": "q01",
+      "chapterId": "ch01",
+      "type": "blank",
+      "question": "MMIX 有多少个通用寄存器？（填数字）",
+      "options": [],
+      "answer": "256",
+      "explain": "编号 0 到 255，每个 64 位，其中 0 号恒为 0。"
+    },
+    {
+      "id": "q02",
+      "chapterId": "ch01",
+      "type": "single",
+      "question": "LDO $1, $2, 16 中 16 的单位是？",
+      "options": [
+        "位",
+        "字节",
+        "字（8 字节）",
+        "页"
+      ],
+      "answer": 1,
+      "explain": "MMIX 偏移量按字节计，访问第 k 个 8 字节元素要写 k×8。"
+    },
+    {
+      "id": "q03",
+      "chapterId": "ch01",
+      "type": "single",
+      "question": "MMIX 的 0 号寄存器有什么特殊之处？",
+      "options": [
+        "存返回地址",
+        "恒为 0，写无效",
+        "存栈指针",
+        "存程序计数器"
+      ],
+      "answer": 1,
+      "explain": "读 $0 恒得 0，写 $0 不生效，可当常数零使用。"
+    },
+    {
+      "id": "q04",
+      "chapterId": "ch02",
+      "type": "single",
+      "question": "PUSHJ $9, SUB 的作用是？",
+      "options": [
+        "只跳转",
+        "压栈 $9 旧值、写返回地址、跳转",
+        "只压栈",
+        "只保存返回地址"
+      ],
+      "answer": 1,
+      "explain": "PUSHJ 同时完成压栈、写返回地址与跳转三件事。"
+    },
+    {
+      "id": "q05",
+      "chapterId": "ch02",
+      "type": "blank",
+      "question": "两层嵌套调用时，栈里最少保存几份返回地址？（填数字）",
+      "options": [],
+      "answer": "2",
+      "explain": "每层各存一份，否则内层会覆盖外层的返回地址。"
+    },
+    {
+      "id": "q06",
+      "chapterId": "ch02",
+      "type": "single",
+      "question": "协同程序与子程序的根本差别是？",
+      "options": [
+        "协同程序更快",
+        "协同程序是对称交替、双方状态都保留",
+        "协同程序不能返回",
+        "协同程序必须多线程"
+      ],
+      "answer": 1,
+      "explain": "子程序是调用—返回的单向关系；协同程序双方都能暂停与恢复，各自有独立栈。"
+    },
+    {
+      "id": "q07",
+      "chapterId": "ch03",
+      "type": "single",
+      "question": "MMIX 相比 MIX，字长与字节宽度的变化是？",
+      "options": [
+        "32 位到 64 位，6 位字节到 8 位字节",
+        "16 位到 32 位",
+        "不变",
+        "64 位到 128 位"
+      ],
+      "answer": 0,
+      "explain": "MMIX 是 64 位机器，字节 8 位；MIX 是 32 位、6 位字节。"
+    },
+    {
+      "id": "q08",
+      "chapterId": "ch03",
+      "type": "blank",
+      "question": "双链表删除一个已知节点需要修改几个指针？（填数字）",
+      "options": [],
+      "answer": "2",
+      "explain": "前驱的 next 与后继的 prev，两条赋值即可。"
+    },
+    {
+      "id": "q09",
+      "chapterId": "ch03",
+      "type": "single",
+      "question": "为什么 64 位下链表相对数组更不划算？",
+      "options": [
+        "指针占 8 字节且节点分散，空间与缓存都更差",
+        "链表不能存 64 位数据",
+        "链表不能删除",
+        "数组不能随机访问"
+      ],
+      "answer": 0,
+      "explain": "指针开销翻倍，节点分散导致缓存命中率低；数组连续存放更省空间也更快。"
+    },
+    {
+      "id": "q10",
+      "chapterId": "__all__",
+      "type": "single",
+      "question": "综合题：要把卷3 的外部排序移植到 MMIX，最需要重新考虑的是？",
+      "options": [
+        "比较次数公式",
+        "块大小、缓冲区数量与 I/O 合并",
+        "趟数公式",
+        "记录的逻辑顺序"
+      ],
+      "answer": 1,
+      "explain": "趟数公式不变；变的是每趟耗时，由块大小、缓冲区与 I/O 合并方式决定。"
+    }
+  ],
+  "flashcards": [
+    {
+      "id": "f01",
+      "chapterId": "ch01",
+      "front": "MMIX 的寄存器与内存规格？",
+      "back": "256 个 64 位通用寄存器（$0 恒为 0）；内存 2^64 字节，按字节编址、大端序。",
+      "tags": [
+        "架构"
+      ]
+    },
+    {
+      "id": "f02",
+      "chapterId": "ch01",
+      "front": "MMIX 指令的四个字段？",
+      "back": "opcode、x、y、z 各 8 位；x 通常是目的寄存器，y、z 是源或立即数。",
+      "tags": [
+        "架构"
+      ]
+    },
+    {
+      "id": "f03",
+      "chapterId": "ch01",
+      "front": "数组第 k 个 8 字节元素的偏移是多少？",
+      "back": "k×8 字节；偏移量按字节计，不是按元素计。",
+      "tags": [
+        "架构"
+      ]
+    },
+    {
+      "id": "f04",
+      "chapterId": "ch02",
+      "front": "PUSHJ 做哪三件事？",
+      "back": "压入 $X 旧值、把返回地址写进 $X、跳到目标地址。",
+      "tags": [
+        "调用"
+      ]
+    },
+    {
+      "id": "f05",
+      "chapterId": "ch02",
+      "front": "栈帧里通常存什么？",
+      "back": "返回地址、被调用者保存的寄存器旧值、局部变量。",
+      "tags": [
+        "调用"
+      ]
+    },
+    {
+      "id": "f06",
+      "chapterId": "ch02",
+      "front": "协同程序与子程序的区别？",
+      "back": "子程序单向调用返回；协同程序对称交替，切换时双方状态都保留。",
+      "tags": [
+        "协同程序"
+      ]
+    },
+    {
+      "id": "f07",
+      "chapterId": "ch03",
+      "front": "64 位下链表为什么相对更贵？",
+      "back": "指针占 8 字节、节点分散、缓存命中率低；同样数据用数组更省也更快。",
+      "tags": [
+        "增补"
+      ]
+    }
+  ]
+}

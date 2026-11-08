@@ -1,0 +1,33 @@
+# -*- coding: utf-8 -*-
+QUIZZES = [
+{"id": "q01", "chapterId": "ch01", "type": "blank",
+ "question": "3 位二进制元组共有多少个？（填数字）",
+ "options": [], "answer": "8",
+ "explain": "2^3 = 8，从 000 到 111。"},
+{"id": "q02", "chapterId": "ch01", "type": "single",
+ "question": "3 位格雷码序列的第五个（从 0 数）编码是？",
+ "options": ["010", "110", "111", "100"], "answer": 1,
+ "explain": "序列为 000、001、011、010、110、111、101、100，第五个是 110。"},
+{"id": "q03", "chapterId": "ch01", "type": "single",
+ "question": "格雷码相对普通二进制计数的主要优势是？",
+ "options": ["数值更小", "相邻只差一位", "位数更少", "可以排序"], "answer": 1,
+ "explain": "相邻编码只差一位，生成下一个只需翻转一位，也避免硬件多位同时跳变。"},
+
+{"id": "q04", "chapterId": "ch02", "type": "blank",
+ "question": "1 2 3 的字典序下一个排列是什么？（写成三个数字，不加空格）",
+ "options": [], "answer": "132",
+ "explain": "最右升序对 2<3，交换得 132，右侧单元素无需反转。"},
+{"id": "q05", "chapterId": "ch02", "type": "single",
+ "question": "4 个元素的圆排列有多少种？",
+ "options": ["4", "6", "12", "24"], "answer": 1,
+ "explain": "(4−1)! = 6，旋转视为同一种。"},
+{"id": "q06", "chapterId": "ch02", "type": "single",
+ "question": "Heap 算法生成 n 个元素的全排列，共做多少次交换？",
+ "options": ["n", "n!−1", "n!", "n log n"], "answer": 1,
+ "explain": "每输出一个新排列至少一次交换，算法每次交换都产生新排列，故为 n!−1。"},
+
+{"id": "q07", "chapterId": "__all__", "type": "single",
+ "question": "综合题：要随机取 10 个元素全排列中的第 500000 个，最直接的做法是？",
+ "options": ["用 next 算法走 500000 步", "用阶乘数系统按排名直接还原", "用 Heap 算法生成后取第 500000 个", "随机洗牌直到命中"], "answer": 1,
+ "explain": "阶乘数系统可按排名 O(n²) 直接还原，不必遍历；10! = 3,628,800，500000 在范围内。"},
+]

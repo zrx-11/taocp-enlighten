@@ -1,0 +1,286 @@
+{
+  "slug": "taocp-v4b",
+  "title": "计算机程序设计艺术 卷4B：生成所有元组和排列",
+  "subtitle": "n 元组与排列：两种最基本的「全部可能」",
+  "book": {
+    "title": "计算机程序设计艺术 生成所有元组和排列（第4卷 第2册 双语版）",
+    "author": "Donald E. Knuth（高德纳）著",
+    "source": [
+      "计算机程序设计艺术 生成所有元组和排列（第4卷 第2册 双语版）.pdf（扫描版 272 页）"
+    ]
+  },
+  "audience": "读完卷4A 第 7.2 节概览、想动手实现生成算法的读者",
+  "goal": "系统掌握：能实现 n 元组与排列的字典序、格雷码、相邻交换三类生成算法，并能说清各自的代价与不变式。",
+  "companion": "taocp-v4b学习伴侣.html",
+  "learningPath": [
+    {
+      "step": "01",
+      "title": "生成所有 n 元组",
+      "chapterIds": [
+        "ch01"
+      ],
+      "checkpoint": "能手写 3 位格雷码，说明它相对二进制计数的优势"
+    },
+    {
+      "step": "02",
+      "title": "生成所有排列",
+      "chapterIds": [
+        "ch02"
+      ],
+      "checkpoint": "能用 next 算法从 1 2 3 走到 3 2 1，能算一个排列的排名"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "ch01",
+      "title": "第 1 章：生成所有 n 元组",
+      "file": "chapters/ch01-生成n元组.md",
+      "difficulty": 2
+    },
+    {
+      "id": "ch02",
+      "title": "第 2 章：生成所有排列",
+      "file": "chapters/ch02-生成排列.md",
+      "difficulty": 3
+    }
+  ],
+  "concepts": [
+    {
+      "id": "c01",
+      "title": "格雷码",
+      "file": "concepts/gray-code.md",
+      "chapterIds": [
+        "ch01"
+      ]
+    },
+    {
+      "id": "c02",
+      "title": "字典序与阶乘数系统",
+      "file": "concepts/lexicographic-factorial.md",
+      "chapterIds": [
+        "ch02"
+      ]
+    },
+    {
+      "id": "c03",
+      "title": "相邻交换生成",
+      "file": "concepts/adjacent-swap-generation.md",
+      "chapterIds": [
+        "ch02"
+      ]
+    }
+  ],
+  "glossary": [
+    {
+      "term": "n 元组",
+      "def": "由 n 个位置组成、每个位置取一个值的序列，各位置独立。",
+      "chapterId": "ch01"
+    },
+    {
+      "term": "混合基",
+      "def": "每个位置有不同进制，例如小时与分钟。",
+      "chapterId": "ch01"
+    },
+    {
+      "term": "格雷码",
+      "def": "相邻两个编码只差一位的编码序列。",
+      "chapterId": "ch01"
+    },
+    {
+      "term": "反射构造",
+      "def": "n 位格雷码由 n−1 位格雷码加 0 前缀与倒序加 1 前缀拼成。",
+      "chapterId": "ch01"
+    },
+    {
+      "term": "字典序",
+      "def": "按第一个不同位置的元素大小决定先后。",
+      "chapterId": "ch02"
+    },
+    {
+      "term": "阶乘数系统",
+      "def": "第 i 位权为 i! 的进位制，用来给排列编号。",
+      "chapterId": "ch02"
+    },
+    {
+      "term": "排名",
+      "def": "一个排列在字典序中的序号，从 0 开始。",
+      "chapterId": "ch02"
+    },
+    {
+      "term": "相邻交换",
+      "def": "每次只交换相邻两个元素的生成方式。",
+      "chapterId": "ch02"
+    },
+    {
+      "term": "Heap 算法",
+      "def": "用 n!−1 次相邻交换生成全部排列的递归算法。",
+      "chapterId": "ch02"
+    },
+    {
+      "term": "圆排列",
+      "def": "把首尾视为相邻的排列，种数为 (n−1)!。",
+      "chapterId": "ch02"
+    }
+  ],
+  "patterns": {
+    "file": "patterns.md"
+  },
+  "cheatsheet": {
+    "file": "cheatsheet.md"
+  },
+  "quizzes": [
+    {
+      "id": "q01",
+      "chapterId": "ch01",
+      "type": "blank",
+      "question": "3 位二进制元组共有多少个？（填数字）",
+      "options": [],
+      "answer": "8",
+      "explain": "2^3 = 8，从 000 到 111。"
+    },
+    {
+      "id": "q02",
+      "chapterId": "ch01",
+      "type": "single",
+      "question": "3 位格雷码序列的第五个（从 0 数）编码是？",
+      "options": [
+        "010",
+        "110",
+        "111",
+        "100"
+      ],
+      "answer": 1,
+      "explain": "序列为 000、001、011、010、110、111、101、100，第五个是 110。"
+    },
+    {
+      "id": "q03",
+      "chapterId": "ch01",
+      "type": "single",
+      "question": "格雷码相对普通二进制计数的主要优势是？",
+      "options": [
+        "数值更小",
+        "相邻只差一位",
+        "位数更少",
+        "可以排序"
+      ],
+      "answer": 1,
+      "explain": "相邻编码只差一位，生成下一个只需翻转一位，也避免硬件多位同时跳变。"
+    },
+    {
+      "id": "q04",
+      "chapterId": "ch02",
+      "type": "blank",
+      "question": "1 2 3 的字典序下一个排列是什么？（写成三个数字，不加空格）",
+      "options": [],
+      "answer": "132",
+      "explain": "最右升序对 2<3，交换得 132，右侧单元素无需反转。"
+    },
+    {
+      "id": "q05",
+      "chapterId": "ch02",
+      "type": "single",
+      "question": "4 个元素的圆排列有多少种？",
+      "options": [
+        "4",
+        "6",
+        "12",
+        "24"
+      ],
+      "answer": 1,
+      "explain": "(4−1)! = 6，旋转视为同一种。"
+    },
+    {
+      "id": "q06",
+      "chapterId": "ch02",
+      "type": "single",
+      "question": "Heap 算法生成 n 个元素的全排列，共做多少次交换？",
+      "options": [
+        "n",
+        "n!−1",
+        "n!",
+        "n log n"
+      ],
+      "answer": 1,
+      "explain": "每输出一个新排列至少一次交换，算法每次交换都产生新排列，故为 n!−1。"
+    },
+    {
+      "id": "q07",
+      "chapterId": "__all__",
+      "type": "single",
+      "question": "综合题：要随机取 10 个元素全排列中的第 500000 个，最直接的做法是？",
+      "options": [
+        "用 next 算法走 500000 步",
+        "用阶乘数系统按排名直接还原",
+        "用 Heap 算法生成后取第 500000 个",
+        "随机洗牌直到命中"
+      ],
+      "answer": 1,
+      "explain": "阶乘数系统可按排名 O(n²) 直接还原，不必遍历；10! = 3,628,800，500000 在范围内。"
+    }
+  ],
+  "flashcards": [
+    {
+      "id": "f01",
+      "chapterId": "ch01",
+      "front": "k 进制 n 位元组共有多少个？",
+      "back": "k^n 个，每位独立取 k 种值。",
+      "tags": [
+        "元组"
+      ]
+    },
+    {
+      "id": "f02",
+      "chapterId": "ch01",
+      "front": "二进制转格雷码的公式？",
+      "back": "g = b ⊕ (b >> 1)，即第 i 位等于 b 的第 i 位与第 i+1 位异或。",
+      "tags": [
+        "格雷码"
+      ]
+    },
+    {
+      "id": "f03",
+      "chapterId": "ch01",
+      "front": "格雷码的反射构造怎么描述？",
+      "back": "n 位 = 0 前缀的 n−1 位格雷码 + 1 前缀的 n−1 位格雷码倒序。",
+      "tags": [
+        "格雷码"
+      ]
+    },
+    {
+      "id": "f04",
+      "chapterId": "ch02",
+      "front": "求字典序下一个排列的四步？",
+      "back": "找最右升序对 i、找最右大于 a[i] 的 j、交换、反转 i 右侧。",
+      "tags": [
+        "排列"
+      ]
+    },
+    {
+      "id": "f05",
+      "chapterId": "ch02",
+      "front": "排列的排名怎么算？",
+      "back": "对每位数「右边比它小的元素个数」，乘以对应阶乘权，再加总；从 0 开始。",
+      "tags": [
+        "排列"
+      ]
+    },
+    {
+      "id": "f06",
+      "chapterId": "ch02",
+      "front": "Heap 算法做多少次交换？为什么？",
+      "back": "n!−1 次；每次交换都产生一个新排列，新排列总数是 n!−1。",
+      "tags": [
+        "排列"
+      ]
+    },
+    {
+      "id": "f07",
+      "chapterId": "ch02",
+      "front": "圆排列与带重复元素排列的种数？",
+      "back": "圆排列 (n−1)!；带重复 n!/(n1!n2!…)。",
+      "tags": [
+        "排列"
+      ]
+    }
+  ]
+}
